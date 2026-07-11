@@ -1,7 +1,7 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: e1687037
+Source commit: 9183f4ac27cd68754c9fd2c146d8546bea45ee8b
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: fcd84a9d5f40695b8424564a09201708ca95635203abe34bea6c10f0725ac0ad
+Package sha256: c4cedc95d438b39b24c387a09edf3f60c58e69b1d7f7df83f6ec39abf14b315d
 Runtime: linux-x64 self-contained
