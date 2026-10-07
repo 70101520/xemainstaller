@@ -1,16 +1,18 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: a90ec31e850f989d8f20ca23d6fb9e66038d7b59
+Source commit: 5789579eaca4316e1e934f2be63c3b804b0d9cd2
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: 3259dc96b6eafc9c45d91e28c5f68c6df471355902a80020faf51738c75ccf58
+Package sha256: 8010db3076211faf930921f8e8605c81219efa6e9ec5906b0d0cef86e8b032a4
 Runtime: linux-x64 self-contained
-Manager sha256: 60f838846270ee313b97df25aa7802db18826dc13b37c2e6aa2f00d2aa44531c
-DbV2 sha256: 33d782ca434530b406e0026871c8305b283a34c6abdaf018b3f0e2d127bb32bc
-Admin: VM-tested AdminUI1 with native dashboard, protected archive actions and improved dataset overview
+Manager sha256: c199a707f73940f3f5970ef53807149baec2150b08f61ac0320dac43cad6155e
+DbV2 sha256: 50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba
+Admin: VM-tested AdminUI1 with native dashboard, safe archive actions and controlled manual Rechurn
 Dataset UI: actual uploaded-record summary, independent table sorting, Back/Refresh, responsive loading/error/retry
 Deletion: stopped/unlinked records only; uploaded rows, batches, caches and CDR history retained
-Schema: additive nullable archive columns applied automatically at Manager bootstrap
-Verification: 24 Angular / 9 Node tests; local and VM list/detail at 11 viewports each; read-only data unchanged
-Regression: safe deletion browser checks on local and actual VM; backend unchanged from prior 83-test release
+Schema: additive archive columns and Data.DialAttempts history applied automatically at Manager bootstrap
+Rechurn: outcomes/batches, preview, limits/wait interval, explicit queue/cancel; no Called resets or automatic Start
+Verification: 104 backend / 34 Angular / 9 Node tests; 21 actual VM MariaDB fixture checks; local/VM dialer at 11 viewports
+Regression: dataset/detail and safe deletion browser checks on actual VM; existing CDR counts/duration totals unchanged
+Actual OBD/trunk-to-Agent call and recording-playback acceptance: pending user laptop test; no actual calls placed
 Clean-machine full installation: not executed

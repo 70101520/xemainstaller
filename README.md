@@ -49,6 +49,11 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
   summaries, configured duplicate-check status, independent table sorting and
   responsive loading/error/retry states. Existing CSV mapping, batch upload,
   dialer selection and protected Delete behavior are preserved.
+- Includes controlled manual Rechurn for verified No Answer/Busy/Not Reachable
+  outcomes, batch selection, preview, retry limits/wait interval and cancellation.
+  Called flags and CDR history are retained; queuing never starts the dialer.
+  Attempt history is additive. Unknown/legacy outcomes are not guessed.
+  Test=Target uses Target only; initial uploaded/pending/attempted counts differ.
 - Applies the Admin allowlist/password policy, secure cookies, explicit CORS
   origins and authenticated diagnostic access from the tested source.
 - Applies WebRTC runtime prerequisites:
@@ -71,29 +76,29 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-07
 
-- Source commit: `a90ec31e` on `XEMA_MAIN/XEMA_WORKFLOW`.
-- Archive SHA256: `3259dc96b6eafc9c45d91e28c5f68c6df471355902a80020faf51738c75ccf58`.
-- Manager SHA256: `60f838846270ee313b97df25aa7802db18826dc13b37c2e6aa2f00d2aa44531c`.
-- DbV2 SHA256: `33d782ca434530b406e0026871c8305b283a34c6abdaf018b3f0e2d127bb32bc`.
-- 24 Angular/Chrome focused tests and 9 dashboard data/polling tests passed.
-  Datasets list and detail passed 11 local/actual-VM desktop/mobile viewports
-  each, including filtering, counts, navigation and loading/error/retry states.
-  Failure states were injected only in browser read requests, without modifying
-  server data. Existing dataset/batch/mapping data matched before and after.
-  Safe deletion browser regression passed locally and on VM with real deletion
-  dialogs cancelled. No outbound call or new upload was made for this UI release.
-- The exact backend from the preceding 83-test release is unchanged. That
-  release tested disposable pace-zero upload/append/cache/deletion fixtures,
-  authorization/CSRF, active/linked guards, stale IDs and retained history.
+- Source commit: `5789579e` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `8010db3076211faf930921f8e8605c81219efa6e9ec5906b0d0cef86e8b032a4`.
+- Manager SHA256: `c199a707f73940f3f5970ef53807149baec2150b08f61ac0320dac43cad6155e`.
+- DbV2 SHA256: `50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba`.
+- 104 focused backend, 34 Angular/Chrome and 9 dashboard Node checks passed.
+  Dialer passed 11 local/actual-VM viewports including loading/error/recovery.
+  Actual VM datasets/detail and safe-deletion cancellation regressions passed.
+- 21 actual VM MariaDB fixture checks covered claims, retry filters/budget,
+  queue idempotency, due-time gating, cancellation/rescheduling and per-attempt
+  CDR/recording correlation. Fixtures were cleaned and existing CDR count and
+  duration totals were unchanged. No actual outbound calls were placed.
 - Archive integrity, path safety, exact tested Manager/Admin artifacts and absence
   of site settings/keys were checked. Landing/login/other portals and Manager
   dependencies match the previous release. See source
-  `docs/ADMIN_DATASETS_UI_20261007.md` for the current UI changes and static
+  `docs/DIALER_RECHURN_20261007.md` for current retry behavior/acceptance gaps and
   backups; `docs/ADMIN_DIALER_DATASET_DELETE_20261007.md` retains the previous
   deletion/retention, migration and SQL/binary-backup notes.
-- This release replaced Admin static files only. No service was restarted:
-  Manager/Asterisk InvocationIDs and backend DLL hashes stayed identical.
-  No database, site settings, TLS, nginx or Asterisk configuration was altered.
+- Manager was restarted with backup and empty active-channel checks.
+  The additive attempt-history table was applied by normal migrations. Landing,
+  other portal assets, site settings, TLS, nginx and Asterisk configuration were
+  preserved; Asterisk was not restarted.
+- Actual trunk-to-Agent dialing, recording playback and corresponding Data
+  Portal/Live activity acceptance remain pending the user's laptop test.
 - The full clean-machine installation was not executed. Client TLS trust and
   remaining dependency advisories are documented in the source security notes.
 - Fresh Admin access defaults to the installing sudo user and root. An
