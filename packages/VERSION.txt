@@ -1,11 +1,11 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: 405a882af2d0602675b843fefe106b8a39f1c519
+Source commit: 25b4301a16127f14f87dc0a2110e6f9da081b8b9
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: 645e571cd00e624956d46317fa3512c1732055361601326c574cee8dd4a2d289
+Package sha256: 558fb8c08595664fb7a5a79adb2678e13b40635c12f087e4ec2ce39b53386773
 Runtime: linux-x64 self-contained
 Manager sha256: 6bc94c11e4c817e036c16add3c8467c5400502c49e8db93860d776d48ffd90b8
-Admin: VM-tested AdminUI1 with native resource/floor dashboard
-Verification: existing VM, 58 backend / 8 Node / 3 Angular tests, 14 dashboard viewports
+Admin: VM-tested AdminUI1 with native resource/floor dashboard and Xema-only side service lists
+Verification: existing VM, 58 backend / 9 Node / 4 Angular tests, 14 dashboard viewports
 Clean-machine full installation: not executed
