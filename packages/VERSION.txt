@@ -1,11 +1,14 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: 25b4301a16127f14f87dc0a2110e6f9da081b8b9
+Source commit: f5a195f198da6f20e8208de39e46ea715ac4d93d
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: 558fb8c08595664fb7a5a79adb2678e13b40635c12f087e4ec2ce39b53386773
+Package sha256: 57e065a20c776d204ca19dbff772fd4154fdcae299f05b9c07b448cba20a4c23
 Runtime: linux-x64 self-contained
-Manager sha256: 6bc94c11e4c817e036c16add3c8467c5400502c49e8db93860d776d48ffd90b8
-Admin: VM-tested AdminUI1 with native resource/floor dashboard and Xema-only side service lists
-Verification: existing VM, 58 backend / 9 Node / 4 Angular tests, 14 dashboard viewports
+Manager sha256: 60f838846270ee313b97df25aa7802db18826dc13b37c2e6aa2f00d2aa44531c
+DbV2 sha256: 33d782ca434530b406e0026871c8305b283a34c6abdaf018b3f0e2d127bb32bc
+Admin: VM-tested AdminUI1 with native dashboard and protected dialer/dataset archive actions
+Deletion: stopped/unlinked records only; uploaded rows, batches, caches and CDR history retained
+Schema: additive nullable archive columns applied automatically at Manager bootstrap
+Verification: existing VM API/DB fixtures, 83 backend / 9 Node / 13 Angular tests, 11 viewports per list
 Clean-machine full installation: not executed

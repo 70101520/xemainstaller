@@ -39,6 +39,12 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 - Its side lists show only the verified Xema components: AsterMQ, FastAGI,
   Manager and Simple CDR. Supporting software and the absent BFF placeholder
   are not shown there; no server dependency is uninstalled.
+- Includes protected Delete actions for stopped dialers and unlinked datasets.
+  Delete archives the configuration; uploaded rows, batches, caches, dialplan and
+  CDR history remain safe. Active/linked/uploading items are blocked. Archived
+  dialer names remain reserved; a new dialer uses a new name.
+- Adds the nullable archive columns automatically through normal Manager
+  migrations on existing and fresh installations; no site-specific SQL is needed.
 - Applies the Admin allowlist/password policy, secure cookies, explicit CORS
   origins and authenticated diagnostic access from the tested source.
 - Applies WebRTC runtime prerequisites:
@@ -61,21 +67,25 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-07
 
-- Source commit: `25b4301a` on `XEMA_MAIN/XEMA_WORKFLOW`.
-- Archive SHA256: `558fb8c08595664fb7a5a79adb2678e13b40635c12f087e4ec2ce39b53386773`.
-- Manager SHA256: `6bc94c11e4c817e036c16add3c8467c5400502c49e8db93860d776d48ffd90b8`.
-- Existing VM deployment, 58 focused backend tests, 9 dashboard data/polling tests,
-  4 Angular/Chrome tests, inherited 11 Live View regressions and 14 actual Admin dashboard
-  desktop/mobile viewport checks passed. RAM/disk/service states were compared
-  with the OS, configured-agent counts with the existing API; read-only Admin
-  navigation and login/security regressions also passed.
+- Source commit: `f5a195f1` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `57e065a20c776d204ca19dbff772fd4154fdcae299f05b9c07b448cba20a4c23`.
+- Manager SHA256: `60f838846270ee313b97df25aa7802db18826dc13b37c2e6aa2f00d2aa44531c`.
+- DbV2 SHA256: `33d782ca434530b406e0026871c8305b283a34c6abdaf018b3f0e2d127bb32bc`.
+- Existing VM deployment, 83 focused backend tests, 9 dashboard data/polling tests,
+  13 Angular/Chrome tests and 11 local/actual-VM desktop/mobile viewports per
+  deletion list passed. The actual VM API/DB test used uniquely named, stopped,
+  pace-zero fixtures, without placing a call. It checked upload/append/cache refresh,
+  authorization/CSRF, active and linked deletion guards, stale IDs and retained
+  row/batch/column/CDR checksums; the user's original records remained unchanged.
 - Archive integrity, path safety, exact tested Manager/Admin artifacts and absence
   of site settings/keys were checked. Landing/login/other portals and Manager
   dependencies match the previous release. See source
-  `docs/ADMIN_SYSTEM_DASHBOARD_20261007.md` for backup and metric semantics.
-- The service-list follow-up changed only Admin static files; the VM needed
-  no service restart. Backend/config/other-portal hashes and service invocation
-  IDs matched before and after deployment.
+  `docs/ADMIN_DIALER_DATASET_DELETE_20261007.md` for deletion/retention semantics,
+  migration behavior and SQL/binary backups. The native dashboard/service-list
+  implementation and its prior verification are retained.
+- This release restarted only Manager after two zero-channel checks. Site settings,
+  landing/login/other portals, TLS, nginx and Asterisk configuration hashes were
+  unchanged. Asterisk and nginx were not restarted.
 - The full clean-machine installation was not executed. Client TLS trust and
   remaining dependency advisories are documented in the source security notes.
 - Fresh Admin access defaults to the installing sudo user and root. An
