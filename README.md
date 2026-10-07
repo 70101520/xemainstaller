@@ -34,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 - Preserves local `appsettings*.json`.
 - Deploys real `agent`, `admin`, `live-view`, and `data-portal` web assets.
 - Includes the responsive Xema landing and redesigned Admin sign-in page.
+- Includes readable Live View Normal/Dark/Auto monitor tabs, tables, status
+  buttons and counters, with theme controls on Dashboard and Real Monitor.
 - Includes the VM-tested AdminUI1 native CPU/RAM/disk, service, call/agent and
   floor-activity dashboard. No additional monitor is required for this page.
 - Its side lists show only the verified Xema components: AsterMQ, FastAGI,
@@ -80,8 +82,27 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-07
 
-- Source commit: `f74b180c` on `XEMA_MAIN/XEMA_WORKFLOW`.
-- Archive SHA256: `2534083667955ae57a3057a80bf1d88e52b53ca35f843f89dfbd8ffd11f81381`.
+- Source commit: `39b1d26b` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `ee4807c581542c80ffc2f1274c3d25861327a39dd92324776bfefb5b03040f27`.
+- Archive size: 63,129,956 bytes; 645 verified files.
+- Live View theme fix: 10 focused Angular checks passed. Actual VM public assets
+  passed contrast, hover and layout checks at 1366/768/390/320px across Dashboard
+  and Team/Queues/Dialers/Wall monitor views. Auto boundaries at 06:00/18:00,
+  manual modes, login day/night and error/recovery states passed. Browser-only
+  realtime fixtures were used; no real user session was borrowed and these
+  checks do not certify actual live counts. An untouched AppComponent scaffold
+  has a private Title access compilation error in the full spec suite; the
+  isolated focused theme suite passed. See source
+  `docs/LIVE_VIEW_THEME_FIX_20261007.md`.
+- Live View main bundle: `main-6T3NS2VL.js`, SHA256
+  `db98cb4f85386ae38d7b094e6847dc1ae010b1ef748bf796cf77c9f8fc85c577`.
+  CSS: `styles-2FIFOUKQ.css`, SHA256
+  `e230b2db243c3ff8b3ca6cd0283a93d8a47ecab0e1cdb11988bb6758b16fd49b`.
+  Only static Live View assets were deployed for this release; no services
+  restarted. Original rollback: `/root/xema-live-view-20261007-135228`.
+  Backend, report calculations, dialer logic and other portals are unchanged.
+- The following Test call/CDR/Rechurn results are retained from prior releases,
+  not claimed as newly rerun for the theme-only change.
 - Manager SHA256: `9463aa9b2e786f9f0b66f93a51d65cce62cab128017508a55b0335aefd534479`.
 - DbV2 SHA256: `50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba`.
 - 120 focused backend and 34 focused Admin Angular checks passed. Three untouched
@@ -109,16 +130,16 @@ Required order when `XEMA_MAIN` changes:
   queue idempotency, due-time gating, cancellation/rescheduling and per-attempt
   CDR/recording correlation. Fixtures were cleaned and existing CDR count and
   duration totals were unchanged. That fixture run did not place actual calls.
-- Archive integrity, path safety, exact tested Manager/Admin/retained VM DbV2
+- Archive integrity, path safety, exact tested Manager/Live View/retained VM DbV2
   artifacts and absence of site settings/keys were checked. Landing/login,
-  Agent/Live/Data Portal and Manager dependencies match the previous release.
+  Agent/Admin/Data Portal and Manager dependencies match the previous release.
   The previous package's actual DbV2 hash differed from its manifest; this
   archive and manifest are aligned to the actual retained VM binary. See source
   `docs/MANUAL_CDR_RECORDING_FIX_20261007.md` for this fix/verification and
   `docs/DIALER_RECHURN_20261007.md` for retained retry behavior/acceptance gaps and
   backups; `docs/ADMIN_DIALER_DATASET_DELETE_20261007.md` retains the previous
   deletion/retention, migration and SQL/binary-backup notes.
-- Manager was restarted with backup and empty active-channel checks.
+- For the prior Test call release, Manager was restarted with backup and empty active-channel checks.
   The previous additive attempt-history migration is retained. Landing/other
   portal assets, site settings, TLS, nginx and Asterisk configuration were
   preserved; Asterisk was not restarted. Historical CDR rows were not rewritten.

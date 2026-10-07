@@ -3,7 +3,7 @@ set -euo pipefail
 
 OFFICIAL_INSTALL_URL="${XEMA_BASE_INSTALL_URL:-https://raw.githubusercontent.com/xema-in/install/master/install-xema.sh}"
 PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/main/packages/xema-workflow-linux-x64.tgz}"
-PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-2534083667955ae57a3057a80bf1d88e52b53ca35f843f89dfbd8ffd11f81381}"
+PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-ee4807c581542c80ffc2f1274c3d25861327a39dd92324776bfefb5b03040f27}"
 
 SKIP_BASE=0
 SKIP_UPGRADE=0
