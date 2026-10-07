@@ -45,6 +45,10 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
   dialer names remain reserved; a new dialer uses a new name.
 - Adds the nullable archive columns automatically through normal Manager
   migrations on existing and fresh installations; no site-specific SQL is needed.
+- Includes a compact Dataset/Batches/File format view with actual uploaded-record
+  summaries, configured duplicate-check status, independent table sorting and
+  responsive loading/error/retry states. Existing CSV mapping, batch upload,
+  dialer selection and protected Delete behavior are preserved.
 - Applies the Admin allowlist/password policy, secure cookies, explicit CORS
   origins and authenticated diagnostic access from the tested source.
 - Applies WebRTC runtime prerequisites:
@@ -67,25 +71,29 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-07
 
-- Source commit: `f5a195f1` on `XEMA_MAIN/XEMA_WORKFLOW`.
-- Archive SHA256: `57e065a20c776d204ca19dbff772fd4154fdcae299f05b9c07b448cba20a4c23`.
+- Source commit: `a90ec31e` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `3259dc96b6eafc9c45d91e28c5f68c6df471355902a80020faf51738c75ccf58`.
 - Manager SHA256: `60f838846270ee313b97df25aa7802db18826dc13b37c2e6aa2f00d2aa44531c`.
 - DbV2 SHA256: `33d782ca434530b406e0026871c8305b283a34c6abdaf018b3f0e2d127bb32bc`.
-- Existing VM deployment, 83 focused backend tests, 9 dashboard data/polling tests,
-  13 Angular/Chrome tests and 11 local/actual-VM desktop/mobile viewports per
-  deletion list passed. The actual VM API/DB test used uniquely named, stopped,
-  pace-zero fixtures, without placing a call. It checked upload/append/cache refresh,
-  authorization/CSRF, active and linked deletion guards, stale IDs and retained
-  row/batch/column/CDR checksums; the user's original records remained unchanged.
+- 24 Angular/Chrome focused tests and 9 dashboard data/polling tests passed.
+  Datasets list and detail passed 11 local/actual-VM desktop/mobile viewports
+  each, including filtering, counts, navigation and loading/error/retry states.
+  Failure states were injected only in browser read requests, without modifying
+  server data. Existing dataset/batch/mapping data matched before and after.
+  Safe deletion browser regression passed locally and on VM with real deletion
+  dialogs cancelled. No outbound call or new upload was made for this UI release.
+- The exact backend from the preceding 83-test release is unchanged. That
+  release tested disposable pace-zero upload/append/cache/deletion fixtures,
+  authorization/CSRF, active/linked guards, stale IDs and retained history.
 - Archive integrity, path safety, exact tested Manager/Admin artifacts and absence
   of site settings/keys were checked. Landing/login/other portals and Manager
   dependencies match the previous release. See source
-  `docs/ADMIN_DIALER_DATASET_DELETE_20261007.md` for deletion/retention semantics,
-  migration behavior and SQL/binary backups. The native dashboard/service-list
-  implementation and its prior verification are retained.
-- This release restarted only Manager after two zero-channel checks. Site settings,
-  landing/login/other portals, TLS, nginx and Asterisk configuration hashes were
-  unchanged. Asterisk and nginx were not restarted.
+  `docs/ADMIN_DATASETS_UI_20261007.md` for the current UI changes and static
+  backups; `docs/ADMIN_DIALER_DATASET_DELETE_20261007.md` retains the previous
+  deletion/retention, migration and SQL/binary-backup notes.
+- This release replaced Admin static files only. No service was restarted:
+  Manager/Asterisk InvocationIDs and backend DLL hashes stayed identical.
+  No database, site settings, TLS, nginx or Asterisk configuration was altered.
 - The full clean-machine installation was not executed. Client TLS trust and
   remaining dependency advisories are documented in the source security notes.
 - Fresh Admin access defaults to the installing sudo user and root. An
