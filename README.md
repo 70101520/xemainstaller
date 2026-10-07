@@ -54,6 +54,10 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
   Called flags and CDR history are retained; queuing never starts the dialer.
   Attempt history is additive. Unknown/legacy outcomes are not guessed.
   Test=Target uses Target only; initial uploaded/pending/attempted counts differ.
+- Maps direct SIP phone outbound CLI/DNI/phone and recording from the same linked
+  originating leg without inventing an Agent/Dialer. The primary native CallId,
+  report SQL/calculations and historical rows are preserved. Data Portal includes
+  visible recording controls, unmuted native audio and download/playback errors.
 - Applies the Admin allowlist/password policy, secure cookies, explicit CORS
   origins and authenticated diagnostic access from the tested source.
 - Applies WebRTC runtime prerequisites:
@@ -76,29 +80,37 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-07
 
-- Source commit: `5789579e` on `XEMA_MAIN/XEMA_WORKFLOW`.
-- Archive SHA256: `8010db3076211faf930921f8e8605c81219efa6e9ec5906b0d0cef86e8b032a4`.
-- Manager SHA256: `c199a707f73940f3f5970ef53807149baec2150b08f61ac0320dac43cad6155e`.
+- Source commit: `50897016` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `31f9333ad0b374e425391cd9ee61e9be4fd20b36394b7eb824ef1180777d9e0f`.
+- Manager SHA256: `2dcb3d1c9049409d5f2d25bee8a0d3de643384bf0e1b79835c177dfc1e2f9562`.
 - DbV2 SHA256: `50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba`.
-- 104 focused backend, 34 Angular/Chrome and 9 dashboard Node checks passed.
-  Dialer passed 11 local/actual-VM viewports including loading/error/recovery.
-  Actual VM datasets/detail and safe-deletion cancellation regressions passed.
-- 21 actual VM MariaDB fixture checks covered claims, retry filters/budget,
+- 109 focused backend checks and eight recording/report Angular tests passed.
+  Actual VM-served recording/player assets passed five desktop/mobile sizes,
+  playing unmuted audio, errors and CSV download/retry. Report/API/audio data in
+  those browser tests were fixtures; real authenticated audio acceptance is separate.
+- A real user manual `1001 -> 9001` call after deployment saved correct CLI/DNI,
+  phone, outbound direction and recording path without an invented Agent/Dialer.
+  Two existing completed OBD rows were confirmed in both the database and the
+  user's downloaded Outbound CSV. A configured missing DNIS export column is
+  not silently added; owners still control their report configuration.
+- In the previous Rechurn release, 21 actual VM MariaDB fixtures covered claims, retry filters/budget,
   queue idempotency, due-time gating, cancellation/rescheduling and per-attempt
   CDR/recording correlation. Fixtures were cleaned and existing CDR count and
-  duration totals were unchanged. No actual outbound calls were placed.
-- Archive integrity, path safety, exact tested Manager/Admin artifacts and absence
-  of site settings/keys were checked. Landing/login/other portals and Manager
+  duration totals were unchanged. That fixture run did not place actual calls.
+- Archive integrity, path safety, exact tested Manager/Data Portal artifacts and absence
+  of site settings/keys were checked. Landing/login/Agent/Admin/Live and Manager
   dependencies match the previous release. See source
-  `docs/DIALER_RECHURN_20261007.md` for current retry behavior/acceptance gaps and
+  `docs/MANUAL_CDR_RECORDING_FIX_20261007.md` for this fix/verification and
+  `docs/DIALER_RECHURN_20261007.md` for retained retry behavior/acceptance gaps and
   backups; `docs/ADMIN_DIALER_DATASET_DELETE_20261007.md` retains the previous
   deletion/retention, migration and SQL/binary-backup notes.
 - Manager was restarted with backup and empty active-channel checks.
-  The additive attempt-history table was applied by normal migrations. Landing,
-  other portal assets, site settings, TLS, nginx and Asterisk configuration were
-  preserved; Asterisk was not restarted.
-- Actual trunk-to-Agent dialing, recording playback and corresponding Data
-  Portal/Live activity acceptance remain pending the user's laptop test.
+  The previous additive attempt-history migration is retained. Landing/other
+  portal assets, site settings, TLS, nginx and Asterisk configuration were
+  preserved; Asterisk was not restarted. The final playback UI update required
+  no further service restart. Historical CDR rows were not rewritten.
+- User confirmation of authenticated recording playback and broader end-to-end
+  retry/Agent/Live acceptance remain separate laptop tests.
 - The full clean-machine installation was not executed. Client TLS trust and
   remaining dependency advisories are documented in the source security notes.
 - Fresh Admin access defaults to the installing sudo user and root. An

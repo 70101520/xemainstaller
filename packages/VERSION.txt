@@ -1,18 +1,24 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: 5789579eaca4316e1e934f2be63c3b804b0d9cd2
+Source commit: 50897016339b0843b93ba8b2f1ecd894deab7815
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: 8010db3076211faf930921f8e8605c81219efa6e9ec5906b0d0cef86e8b032a4
+Package sha256: 31f9333ad0b374e425391cd9ee61e9be4fd20b36394b7eb824ef1180777d9e0f
 Runtime: linux-x64 self-contained
-Manager sha256: c199a707f73940f3f5970ef53807149baec2150b08f61ac0320dac43cad6155e
+Manager sha256: 2dcb3d1c9049409d5f2d25bee8a0d3de643384bf0e1b79835c177dfc1e2f9562
 DbV2 sha256: 50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba
 Admin: VM-tested AdminUI1 with native dashboard, safe archive actions and controlled manual Rechurn
 Dataset UI: actual uploaded-record summary, independent table sorting, Back/Refresh, responsive loading/error/retry
 Deletion: stopped/unlinked records only; uploaded rows, batches, caches and CDR history retained
 Schema: additive archive columns and Data.DialAttempts history applied automatically at Manager bootstrap
 Rechurn: outcomes/batches, preview, limits/wait interval, explicit queue/cancel; no Called resets or automatic Start
-Verification: 104 backend / 34 Angular / 9 Node tests; 21 actual VM MariaDB fixture checks; local/VM dialer at 11 viewports
-Regression: dataset/detail and safe deletion browser checks on actual VM; existing CDR counts/duration totals unchanged
-Actual OBD/trunk-to-Agent call and recording-playback acceptance: pending user laptop test; no actual calls placed
+CDR: same-linked manual SIP source CLI/DNI/phone/recording; no invented Agent/Dialer; existing native CallId retained
+Data Portal: recording icon buttons, unmuted native audio, loading/error states, released blob URLs and CSV download errors
+Data Portal bundle: main.f593b5cb6d8235a6.js sha256 222c813e7d566e928a989445ab6788ba9fb4fcf63970c93ff99569351a533db4
+Verification: 109 focused backend / 8 recording-report Angular checks; VM-asset playback/error/download tests at 5 desktop/mobile sizes
+Actual VM: user manual 1001->9001 saved Out/1234/9001/1001/Recorded=1 with real originating-channel recording path
+Actual OBD: two existing outbound rows verified in database and user's downloaded CSV, Agent Balaram/Dialer 5/Recorded=True
+Preserved: report SQL/calculations/access, historical rows, other portals, dependencies, dialer pacing/cache/retry
+Authenticated user audio playback acceptance: pending; browser audio/API fixtures are not end-to-end customer-audio certification
+Previous Rechurn release: 34 Angular/9 Node and 21 actual MariaDB fixtures; all existing features retained
 Clean-machine full installation: not executed
