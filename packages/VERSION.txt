@@ -1,13 +1,15 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: 50897016339b0843b93ba8b2f1ecd894deab7815
+Source commit: f74b180c04aa65019eb1c6f103314b276a10bbc7
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: 31f9333ad0b374e425391cd9ee61e9be4fd20b36394b7eb824ef1180777d9e0f
+Package sha256: 2534083667955ae57a3057a80bf1d88e52b53ca35f843f89dfbd8ffd11f81381
 Runtime: linux-x64 self-contained
-Manager sha256: 2dcb3d1c9049409d5f2d25bee8a0d3de643384bf0e1b79835c177dfc1e2f9562
+Manager sha256: 9463aa9b2e786f9f0b66f93a51d65cce62cab128017508a55b0335aefd534479
 DbV2 sha256: 50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba
 Admin: VM-tested AdminUI1 with native dashboard, safe archive actions and controlled manual Rechurn
+Admin bundle: main.f0e5bb4344f94894.js sha256 33d9726ec578276558f43ac5e8da6a90fbc02eecf3d465fc8226532d9067b6e7
+Test call: dedicated validated ID/number request, Admin CSRF, stopped-engine guard and explicit failure messages
 Dataset UI: actual uploaded-record summary, independent table sorting, Back/Refresh, responsive loading/error/retry
 Deletion: stopped/unlinked records only; uploaded rows, batches, caches and CDR history retained
 Schema: additive archive columns and Data.DialAttempts history applied automatically at Manager bootstrap
@@ -15,10 +17,14 @@ Rechurn: outcomes/batches, preview, limits/wait interval, explicit queue/cancel;
 CDR: same-linked manual SIP source CLI/DNI/phone/recording; no invented Agent/Dialer; existing native CallId retained
 Data Portal: recording icon buttons, unmuted native audio, loading/error states, released blob URLs and CSV download errors
 Data Portal bundle: main.f593b5cb6d8235a6.js sha256 222c813e7d566e928a989445ab6788ba9fb4fcf63970c93ff99569351a533db4
-Verification: 109 focused backend / 8 recording-report Angular checks; VM-asset playback/error/download tests at 5 desktop/mobile sizes
+Verification: 120 focused backend / 34 focused Admin Angular checks; real VM auth/CSRF/validation/stopped guard, test dialog at 3 sizes, dataset regression at 11 sizes
+Actual Test call: VM button to 9001 connected; CDR 1791378647.122 Out/CLI1234/DNI9001/Balaram/Phone1001/Dialer5/Recorded1; campaign rows/history unchanged
+Previous recording verification: 8 recording-report Angular checks and 5 VM-asset desktop/mobile playback/error/download fixtures retained
 Actual VM: user manual 1001->9001 saved Out/1234/9001/1001/Recorded=1 with real originating-channel recording path
 Actual OBD: two existing outbound rows verified in database and user's downloaded CSV, Agent Balaram/Dialer 5/Recorded=True
 Preserved: report SQL/calculations/access, historical rows, other portals, dependencies, dialer pacing/cache/retry
-Authenticated user audio playback acceptance: pending; browser audio/API fixtures are not end-to-end customer-audio certification
+Authenticated user audio playback acceptance: user confirmed working; actual call audio was not copied off VM
+Test gaps: three untouched legacy dataset scaffold tests fail for missing HttpClient providers; focused tests passed
+Package integrity: exact retained VM DbV2 used; earlier package binary differed from its listed DbV2 hash, now aligned
 Previous Rechurn release: 34 Angular/9 Node and 21 actual MariaDB fixtures; all existing features retained
 Clean-machine full installation: not executed

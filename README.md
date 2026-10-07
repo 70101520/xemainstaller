@@ -80,14 +80,26 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-07
 
-- Source commit: `50897016` on `XEMA_MAIN/XEMA_WORKFLOW`.
-- Archive SHA256: `31f9333ad0b374e425391cd9ee61e9be4fd20b36394b7eb824ef1180777d9e0f`.
-- Manager SHA256: `2dcb3d1c9049409d5f2d25bee8a0d3de643384bf0e1b79835c177dfc1e2f9562`.
+- Source commit: `f74b180c` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `2534083667955ae57a3057a80bf1d88e52b53ca35f843f89dfbd8ffd11f81381`.
+- Manager SHA256: `9463aa9b2e786f9f0b66f93a51d65cce62cab128017508a55b0335aefd534479`.
 - DbV2 SHA256: `50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba`.
-- 109 focused backend checks and eight recording/report Angular tests passed.
-  Actual VM-served recording/player assets passed five desktop/mobile sizes,
-  playing unmuted audio, errors and CSV download/retry. Report/API/audio data in
-  those browser tests were fixtures; real authenticated audio acceptance is separate.
+- 120 focused backend and 34 focused Admin Angular checks passed. Three untouched
+  legacy dataset scaffold tests failed for missing HttpClient providers in a
+  broader run; they are not claimed as passing.
+- Test call no longer requires a dataset Batch. It uses a dedicated validated
+  ID/number request with Admin CSRF and stopped-engine protection. Backend and
+  UI failures are explicit; reload older Admin tabs to pick up the protected flow.
+  Actual VM auth/CSRF/validation checks and dialog/error states at three screen
+  sizes passed. Dataset readonly regression passed at 11 screen sizes.
+- One real VM button Test call to the authorized MicroSIP `9001` connected:
+  CDR `1791378647.122`, Out/CLI1234/DNI9001/Balaram/Phone1001/Dialer5/Recorded1.
+  Its recording was valid GSM and stayed on the VM. Campaign progress remained
+  2 attempted / 0 pending, with two Answered retry-history entries. No Called
+  reset or rechurn was performed. See source `docs/DIALER_TEST_CALL_FIX_20261007.md`.
+- The previous eight recording/report Angular checks and five desktop/mobile
+  VM-asset playback/error/download fixture checks are retained. The user has
+  now separately confirmed authenticated Data Portal playback is working.
 - A real user manual `1001 -> 9001` call after deployment saved correct CLI/DNI,
   phone, outbound direction and recording path without an invented Agent/Dialer.
   Two existing completed OBD rows were confirmed in both the database and the
@@ -97,9 +109,11 @@ Required order when `XEMA_MAIN` changes:
   queue idempotency, due-time gating, cancellation/rescheduling and per-attempt
   CDR/recording correlation. Fixtures were cleaned and existing CDR count and
   duration totals were unchanged. That fixture run did not place actual calls.
-- Archive integrity, path safety, exact tested Manager/Data Portal artifacts and absence
-  of site settings/keys were checked. Landing/login/Agent/Admin/Live and Manager
-  dependencies match the previous release. See source
+- Archive integrity, path safety, exact tested Manager/Admin/retained VM DbV2
+  artifacts and absence of site settings/keys were checked. Landing/login,
+  Agent/Live/Data Portal and Manager dependencies match the previous release.
+  The previous package's actual DbV2 hash differed from its manifest; this
+  archive and manifest are aligned to the actual retained VM binary. See source
   `docs/MANUAL_CDR_RECORDING_FIX_20261007.md` for this fix/verification and
   `docs/DIALER_RECHURN_20261007.md` for retained retry behavior/acceptance gaps and
   backups; `docs/ADMIN_DIALER_DATASET_DELETE_20261007.md` retains the previous
@@ -107,10 +121,10 @@ Required order when `XEMA_MAIN` changes:
 - Manager was restarted with backup and empty active-channel checks.
   The previous additive attempt-history migration is retained. Landing/other
   portal assets, site settings, TLS, nginx and Asterisk configuration were
-  preserved; Asterisk was not restarted. The final playback UI update required
-  no further service restart. Historical CDR rows were not rewritten.
-- User confirmation of authenticated recording playback and broader end-to-end
-  retry/Agent/Live acceptance remain separate laptop tests.
+  preserved; Asterisk was not restarted. Historical CDR rows were not rewritten.
+  No new migration was needed for the Test call fix.
+- Broader end-to-end retry and QMon predictive acceptance remain separate tests;
+  the actual test campaign is Simple Dialer, not QMon.
 - The full clean-machine installation was not executed. Client TLS trust and
   remaining dependency advisories are documented in the source security notes.
 - Fresh Admin access defaults to the installing sudo user and root. An
