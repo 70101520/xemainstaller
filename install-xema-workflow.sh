@@ -3,7 +3,7 @@ set -euo pipefail
 
 OFFICIAL_INSTALL_URL="${XEMA_BASE_INSTALL_URL:-https://raw.githubusercontent.com/xema-in/install/master/install-xema.sh}"
 PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/main/packages/xema-workflow-linux-x64.tgz}"
-PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-e772d47501433ac114a16af88fcc2e4f4e6117b47d713239f480f456b9bf9012}"
+PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-645e571cd00e624956d46317fa3512c1732055361601326c574cee8dd4a2d289}"
 
 SKIP_BASE=0
 SKIP_UPGRADE=0
@@ -237,6 +237,8 @@ verify_install() {
   done
   test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4200/hangfire/)" = 401
   test "$(curl -ks -o /dev/null -w '%{http_code}' https://127.0.0.1/netdata/api/v1/info)" = 401
+  test "$(curl -ks -o /dev/null -w '%{http_code}' https://127.0.0.1/api/Admin/SystemHealth)" = 401
+  grep -Fq '/api/Admin/SystemHealth' /var/lib/xema/manager/wwwroot/admin/main*.js
 
   if grep -Ei 'stub' \
     /var/lib/xema/manager/wwwroot/agent/index.html \

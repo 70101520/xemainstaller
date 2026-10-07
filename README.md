@@ -34,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 - Preserves local `appsettings*.json`.
 - Deploys real `agent`, `admin`, `live-view`, and `data-portal` web assets.
 - Includes the responsive Xema landing and redesigned Admin sign-in page.
+- Includes the VM-tested AdminUI1 native CPU/RAM/disk, service, call/agent and
+  floor-activity dashboard. No additional monitor is required for this page.
 - Applies the Admin allowlist/password policy, secure cookies, explicit CORS
   origins and authenticated diagnostic access from the tested source.
 - Applies WebRTC runtime prerequisites:
@@ -56,11 +58,18 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-07
 
-- Source commit: `3ef677a7` on `XEMA_MAIN/XEMA_WORKFLOW`.
-- Archive SHA256: `e772d47501433ac114a16af88fcc2e4f4e6117b47d713239f480f456b9bf9012`.
-- Manager SHA256: `7362b4231cc161213273b0da4da5f3a4e4ad08a1e5b1bfe15b79c2b3e263eb6a`.
-- Existing test VM deployment, 40 focused backend tests, 11 dashboard regressions,
-  16 Admin login viewport checks and actual Admin login/security checks passed.
+- Source commit: `405a882a` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `645e571cd00e624956d46317fa3512c1732055361601326c574cee8dd4a2d289`.
+- Manager SHA256: `6bc94c11e4c817e036c16add3c8467c5400502c49e8db93860d776d48ffd90b8`.
+- Existing VM deployment, 58 focused backend tests, 8 dashboard data/polling tests,
+  3 Angular/Chrome tests, 11 Live View regressions and 14 actual Admin dashboard
+  desktop/mobile viewport checks passed. RAM/disk/service states were compared
+  with the OS, configured-agent counts with the existing API; read-only Admin
+  navigation and login/security regressions also passed.
+- Archive integrity, path safety, exact tested Manager/Admin artifacts and absence
+  of site settings/keys were checked. Landing/login/other portals and Manager
+  dependencies match the previous release. See source
+  `docs/ADMIN_SYSTEM_DASHBOARD_20261007.md` for backup and metric semantics.
 - The full clean-machine installation was not executed. Client TLS trust and
   remaining dependency advisories are documented in the source security notes.
 - Fresh Admin access defaults to the installing sudo user and root. An
