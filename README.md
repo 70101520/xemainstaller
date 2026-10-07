@@ -36,6 +36,9 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 - Includes the responsive Xema landing and redesigned Admin sign-in page.
 - Includes readable Live View Normal/Dark/Auto monitor tabs, tables, status
   buttons and counters, with theme controls on Dashboard and Real Monitor.
+- Includes Simple/OBD dialer live status and explicit no-pending/schedule/pace/
+  connection reasons, protected cached snapshots and sortable monitor columns.
+  Session origination progress is distinct from completed/answered CDR counts.
 - Includes the VM-tested AdminUI1 native CPU/RAM/disk, service, call/agent and
   floor-activity dashboard. No additional monitor is required for this page.
 - Its side lists show only the verified Xema components: AsterMQ, FastAGI,
@@ -80,7 +83,43 @@ Required order when `XEMA_MAIN` changes:
 4. Verify archive contents, absence of site settings/secrets and SHA256. Update `PACKAGE_SHA256` in `install-xema-workflow.sh`.
 5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo. Its `origin` is GitHub, not the source repo's Azure remote.
 
-## Tested Package: 2026-10-07
+## Tested Package: 2026-10-08
+
+- Source commit: `f7a04141` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `0da2e999b977194c3b5fcf05787302b51b3bd51f1e85f1d7eeacf48b07bbc583`.
+- Archive size: 63,137,036 bytes; 645 verified files. Exact VM-tested Manager,
+  retained DbV2/ARI/dependencies and final Live View; unchanged other portals.
+  No site settings, keys, tokens, recordings or logs are included.
+- Simple Dialer previously never published live progress. The original target
+  was exhausted: two answered records, zero pending. No historical reset/redial
+  was used. New status explains why a started engine is not originating calls.
+- The user's new internal 9001 batch produced seven actual automatic CDR rows:
+  six Answered and one NoAnswer. All six answered rows have CLI1234/DNI9001,
+  Balaram/Phone1001/Dialer5/Recorded1 and nonempty GSM files. SoX decoded one
+  recording to its null sink (8.2 seconds); no audio was copied off the VM.
+  The original 340 CDR rows retain their duration aggregate 18,322.
+- Real protected runtime status showed pending=5/session progress=2/speed=1
+  during the campaign. Anonymous status remains 401. Current authenticated
+  Data Portal playback was not independently rerun; earlier acceptance remains.
+- 42 focused backend cases executed on Linux with compiled xUnit assertions;
+  Windows application control blocked the normal local test runner. Fourteen
+  focused Angular checks passed. Actual VM asset visual checks cover all four
+  tabs at 1366/768/390/320px, day/night, hover, error/recovery and dialer states.
+  Visual realtime payloads are browser-only fixtures, not real live counts.
+- Manager SHA256: `5814c87a600fa9f18b4cd732d6610f9a58db8bbd85119848f5700e68691196e2`.
+- Retained DbV2 SHA256: `50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba`.
+- Live View: `main-LTOULLG2.js`, SHA256
+  `fff625baa327670d75565d9f740c07d2490026e80b26f48263bdf00fa1951b92`.
+  CSS remains `styles-2FIFOUKQ.css` with the hash below.
+- Deployment replaced Manager.dll/Live View and restarted only Manager after
+  zero active-call checks. No Asterisk restart/nginx reload or report/formula
+  change. Original rollback: `/root/xema-dialer-monitor-20261007-153530`.
+  See source `docs/DIALER_LIVE_STATUS_FIX_20261008.md`.
+- Clean-machine full install and a new XDQMon predictive campaign were not run.
+  The current actual campaign is Simple/OBD. Existing full-suite scaffold gaps
+  and dependency advisories are retained, not claimed as fixed/passing.
+
+## Retained Verification: 2026-10-07
 
 - Source commit: `39b1d26b` on `XEMA_MAIN/XEMA_WORKFLOW`.
 - Archive SHA256: `ee4807c581542c80ffc2f1274c3d25861327a39dd92324776bfefb5b03040f27`.

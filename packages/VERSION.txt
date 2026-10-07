@@ -1,19 +1,19 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: 39b1d26b406a9409744e3f0764e4996f2b665b17
+Source commit: f7a04141fc5942f5a9a594c77c5135a1e8b66d29
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: ee4807c581542c80ffc2f1274c3d25861327a39dd92324776bfefb5b03040f27
-Package bytes: 63129956
+Package sha256: 0da2e999b977194c3b5fcf05787302b51b3bd51f1e85f1d7eeacf48b07bbc583
+Package bytes: 63137036
 Runtime: linux-x64 self-contained
 Live View: readable Normal/Dark/Auto tabs, headers, rows, status buttons, hover, counters and error/empty states; theme controls on both views
-Live View bundle: main-6T3NS2VL.js sha256 db98cb4f85386ae38d7b094e6847dc1ae010b1ef748bf796cf77c9f8fc85c577
+Live View bundle: main-LTOULLG2.js sha256 fff625baa327670d75565d9f740c07d2490026e80b26f48263bdf00fa1951b92
 Live View CSS: styles-2FIFOUKQ.css sha256 e230b2db243c3ff8b3ca6cd0283a93d8a47ecab0e1cdb11988bb6758b16fd49b
-Theme verification: 10 focused Angular checks; actual VM public assets at 1366/768/390/320px, four monitor tabs, contrast/hover, Auto 06:00/18:00, login day/night and error recovery
+Live status verification: 42 focused backend cases executed on Linux; 14 focused Angular checks; actual VM public assets at 1366/768/390/320px, four monitor tabs, contrast/hover, Auto 06:00/18:00, login day/night, error recovery and dialer states
 Theme test boundary: browser-only realtime fixtures; no real user sessions borrowed or real live counts certified
-Theme deployment: static assets only, no service restart; original rollback /root/xema-live-view-20261007-135228
+Live status deployment: Manager.dll plus Live View, Manager-only restart after zero-call checks; original rollback /root/xema-dialer-monitor-20261007-153530
 Theme test gap: untouched AppComponent scaffold fails full spec compilation (private Title access); isolated focused suite passed
-Manager sha256: 9463aa9b2e786f9f0b66f93a51d65cce62cab128017508a55b0335aefd534479
+Manager sha256: 5814c87a600fa9f18b4cd732d6610f9a58db8bbd85119848f5700e68691196e2
 DbV2 sha256: 50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba
 Admin: VM-tested AdminUI1 with native dashboard, safe archive actions and controlled manual Rechurn
 Admin bundle: main.f0e5bb4344f94894.js sha256 33d9726ec578276558f43ac5e8da6a90fbc02eecf3d465fc8226532d9067b6e7
@@ -29,7 +29,13 @@ Verification: 120 focused backend / 34 focused Admin Angular checks; real VM aut
 Actual Test call: VM button to 9001 connected; CDR 1791378647.122 Out/CLI1234/DNI9001/Balaram/Phone1001/Dialer5/Recorded1; campaign rows/history unchanged
 Previous recording verification: 8 recording-report Angular checks and 5 VM-asset desktop/mobile playback/error/download fixtures retained
 Actual VM: user manual 1001->9001 saved Out/1234/9001/1001/Recorded=1 with real originating-channel recording path
-Actual OBD: two existing outbound rows verified in database and user's downloaded CSV, Agent Balaram/Dialer 5/Recorded=True
+Simple Dialer: real status reasons/pending count and session origination progress, initial/reconnect snapshot to existing Manager/TeamLead only; no invented connected=0
+Actual new OBD: user's seven new 9001 automatic calls produced seven CDR rows, six Answered and one NoAnswer; all six answered rows CLI1234/DNI9001/Balaram/Phone1001/Dialer5/Recorded1, six nonempty GSM files on VM
+Recording check: SoX decoded actual GSM to null sink (8.2 seconds); audio not copied off VM; current authenticated Data Portal playback not independently rerun
+Historical data: original 340 CDR rows retain duration aggregate 18322; no Called resets or answered-record redial
+Backend runner gap: Windows application control blocked local runner; Linux compiled xUnit assertions used, no false zero-exit test pass
+Predictive boundary: current campaign type 101 Simple/OBD; new XDQMon predictive campaign not executed
+Live status delivery notes: source docs/DIALER_LIVE_STATUS_FIX_20261008.md
 Preserved: report SQL/calculations/access, historical rows, other portals, dependencies, dialer pacing/cache/retry
 Authenticated user audio playback acceptance: user confirmed working; actual call audio was not copied off VM
 Test gaps: three untouched legacy dataset scaffold tests fail for missing HttpClient providers; focused tests passed
