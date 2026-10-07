@@ -3,7 +3,7 @@ set -euo pipefail
 
 OFFICIAL_INSTALL_URL="${XEMA_BASE_INSTALL_URL:-https://raw.githubusercontent.com/xema-in/install/master/install-xema.sh}"
 PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/main/packages/xema-workflow-linux-x64.tgz}"
-PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-c4cedc95d438b39b24c387a09edf3f60c58e69b1d7f7df83f6ec39abf14b315d}"
+PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-e772d47501433ac114a16af88fcc2e4f4e6117b47d713239f480f456b9bf9012}"
 
 SKIP_BASE=0
 SKIP_UPGRADE=0
@@ -21,6 +21,10 @@ while [ "$#" -gt 0 ]; do
       ;;
     --package-url)
       PACKAGE_URL="${2:?--package-url requires a URL}"
+      shift 2
+      ;;
+    --package-file)
+      PACKAGE_URL="file://$(realpath "${2:?--package-file requires a local archive}")"
       shift 2
       ;;
     --package-sha256)
@@ -51,11 +55,18 @@ need_cmd curl
 need_cmd tar
 need_cmd sha256sum
 need_cmd systemctl
+need_cmd python3
 
 timestamp="$(date +%Y%m%d-%H%M%S)"
 workdir="$(mktemp -d /tmp/xema-workflow-install.XXXXXX)"
 backup_dir=""
 deploy_started=0
+config_backup=""
+config_paths=(/etc/nginx/sites-available/xema.nginx /etc/nginx/snippets/xema-proxy-security.conf
+  /etc/ssl/certs/certificate.pem /etc/ssl/private/key.pem
+  /etc/asterisk/http.conf /etc/asterisk/modules.conf /etc/asterisk/pjsip.conf
+  /etc/asterisk/keys/xema-cert.pem /etc/asterisk/keys/xema-key.pem
+  /etc/systemd/system/xema-manager.service.d/self-contained.conf)
 
 cleanup() {
   rm -rf "$workdir"
@@ -68,10 +79,15 @@ rollback() {
     systemctl stop xema-manager >/dev/null 2>&1 || true
     rm -rf /var/lib/xema/manager
     cp -a "$backup_dir" /var/lib/xema/manager
-    rm -f /etc/systemd/system/xema-manager.service.d/self-contained.conf
+    for path in "${config_paths[@]}"; do
+      if [ -e "$config_backup$path" ]; then cp -a "$config_backup$path" "$path";
+      else rm -f "$path"; fi
+    done
     systemctl daemon-reload >/dev/null 2>&1 || true
     systemctl reset-failed xema-manager >/dev/null 2>&1 || true
     systemctl start xema-manager >/dev/null 2>&1 || true
+    nginx -t && systemctl reload nginx || true
+    systemctl restart asterisk || true
   fi
   cleanup
   exit "$exit_code"
@@ -105,12 +121,24 @@ download_package() {
   local package="$workdir/xema-workflow-linux-x64.tgz"
   curl -fL "$PACKAGE_URL" -o "$package"
 
-  if [ -n "$PACKAGE_SHA256" ]; then
-    echo "${PACKAGE_SHA256}  ${package}" | sha256sum -c -
-  fi
+  [[ "$PACKAGE_SHA256" =~ ^[[:xdigit:]]{64}$ ]] || { echo 'A package SHA256 is required.' >&2; exit 1; }
+  echo "${PACKAGE_SHA256}  ${package}" | sha256sum -c -
+
+  python3 - "$package" <<'PY'
+import pathlib, sys, tarfile
+with tarfile.open(sys.argv[1]) as archive:
+    for entry in archive.getmembers():
+        path = pathlib.PurePosixPath(entry.name)
+        if path.is_absolute() or '..' in path.parts or not (entry.isfile() or entry.isdir()):
+            raise SystemExit('Unsafe package member: ' + entry.name)
+PY
 
   mkdir -p "$workdir/package"
   tar -xzf "$package" -C "$workdir/package"
+  test -s "$workdir/package/deploy/apply-xema-web-security.sh"
+  test -s "$workdir/package/deploy/configure-xema-security.py"
+  test -s "$workdir/package/deploy/xema-secure.nginx"
+  test -s "$workdir/package/SECURITY_BASELINE.txt"
 }
 
 copy_app_without_local_settings() {
@@ -138,9 +166,32 @@ deploy_workflow_package() {
     exit 1
   fi
 
+  for portal in agent admin live-view data-portal; do
+    local index="$package_dir/wwwroot/$portal/index.html"
+    if [ ! -s "$index" ] || grep -qi 'stub' "$index" || ! grep -q '<app-root' "$index"; then
+      echo "Package has a missing or placeholder portal: $portal" >&2
+      exit 1
+    fi
+    if ! find "$package_dir/wwwroot/$portal" -maxdepth 1 -name 'main*.js' -size +0c | grep -q .; then
+      echo "Package missing JavaScript bundle: $portal" >&2
+      exit 1
+    fi
+  done
+
   backup_dir="/root/xema-manager-backup-${timestamp}"
+  if systemctl is-active --quiet asterisk; then
+    if [ -n "$(asterisk -rx 'core show channels concise')" ]; then
+      echo 'Active calls detected; installation deferred.' >&2
+      exit 1
+    fi
+  fi
   echo "Backing up current manager to $backup_dir"
   cp -a "$manager_dir" "$backup_dir"
+  config_backup="${backup_dir}-config"
+  mkdir -p -m 0700 "$config_backup"
+  for path in "${config_paths[@]}"; do
+    if [ -e "$path" ]; then cp -a --parents "$path" "$config_backup/"; fi
+  done
   deploy_started=1
 
   echo "Stopping xema-manager..."
@@ -152,7 +203,7 @@ deploy_workflow_package() {
 
   echo "Deploying web portals..."
   mkdir -p "$manager_dir/wwwroot"
-  for portal in agent admin live-view; do
+  for portal in agent admin live-view data-portal; do
     if [ ! -d "$package_dir/wwwroot/$portal" ]; then
       echo "Package missing wwwroot/$portal" >&2
       exit 1
@@ -180,11 +231,18 @@ verify_install() {
   echo "Verifying XEMA workflow install..."
   systemctl is-active --quiet xema-manager
   systemctl is-active --quiet asterisk
+  for attempt in $(seq 1 30); do
+    if curl -fsS http://127.0.0.1:4200/api/Setup/Ping >/dev/null; then break; fi
+    sleep 2
+  done
+  test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4200/hangfire/)" = 401
+  test "$(curl -ks -o /dev/null -w '%{http_code}' https://127.0.0.1/netdata/api/v1/info)" = 401
 
-  if grep -R "Agent Stub\|Admin Stub\|Live View Stub" \
-    /var/lib/xema/manager/wwwroot/agent \
-    /var/lib/xema/manager/wwwroot/admin \
-    /var/lib/xema/manager/wwwroot/live-view >/dev/null 2>&1; then
+  if grep -Ei 'stub' \
+    /var/lib/xema/manager/wwwroot/agent/index.html \
+    /var/lib/xema/manager/wwwroot/admin/index.html \
+    /var/lib/xema/manager/wwwroot/live-view/index.html \
+    /var/lib/xema/manager/wwwroot/data-portal/index.html >/dev/null 2>&1; then
     echo "Stub page detected after deploy." >&2
     exit 1
   fi
@@ -197,7 +255,7 @@ verify_install() {
   echo "XEMA workflow install completed successfully."
 }
 
-run_base_install
 download_package
+run_base_install
 deploy_workflow_package
 verify_install
