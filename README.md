@@ -85,6 +85,42 @@ Required order when `XEMA_MAIN` changes:
 
 ## Tested Package: 2026-10-08
 
+- Source commit: `35ff07c0` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `fc23fec59b2af48318c18ae08b05c00d901c9e9632d36eb55ddae8961c0a679b`.
+- Archive: 63,194,918 bytes; 646 verified files. Exact tested Manager/DbV2 and
+  Admin/Live assets, including both package copies. Agent/Data Portal, runtime,
+  ARI/dependencies, landing/login and security artifacts remain unchanged.
+- Dataset batches can be archived; campaign batches can be excluded from only
+  that dialer, persistently across Update. Uploaded rows/cache/history/recordings
+  remain; queued retries in the removed scope cancel. Started engines, uploads,
+  in-progress attempts and unsafe global dataset consumers block removal.
+  Endpoints require System Admin, CSRF and the existing configuration gate.
+- Rechurn Preview lists eligible contacts and answered-number exclusions;
+  Queue Rechurn is separate, confirmed and reports the actual queued count.
+  Simple/OBD Live shows Started/Stopped separately from work status and retry
+  count/due date. Answered-number policy and Called flags are not relaxed/reset.
+- 71 Linux focused backend cases, 41 actual MariaDB fixture checks, 9 focused
+  Admin and 15 focused Live Angular cases passed. Actual VM assets passed
+  desktop/mobile preview/remove/error/cancel/busy and day/night Live tests.
+  Visual mutations/realtime data were browser fixtures; no real batch was removed.
+- Actual VM DIAELR1 remains Started with target pending=0/queued=0. Its one
+  no-answer number 9001 has answered history, so preview=0/blockedAnswered=1.
+  Existing 347 CDR rows and duration aggregate 18,373 are unchanged.
+- Manager: `3724df51923a7dc5ad6e30a2d8a91bf67901463af28ba7dcfdbabf03981f2cc8`.
+  DbV2: `739f65f3de33889491e67cbdc029f404182674f8fdd5d6979044719b6c743b28`.
+  Admin main.757a0c398fa02d55.js: `7e5ccea934a5fa0d6d72779b9ebb229ad347c58de47c7bbc204eda32fca8c1fb`.
+  Live main-KM37BT63.js: `315f14c324a7a05b78d09cb61de320a3e54cc643d93e6e9c2ef6baab99ee94b4`.
+- Manager-only restart after zero active-call checks and root-only SQL/binary
+  backup `/root/xema-batch-rechurn-20261008-030605`. Additive batch archive/exclusion
+  migration applies at normal bootstrap. No Asterisk/nginx/config/report changes.
+  Rollback retains additive metadata and never restores SQL casually.
+- No clean-OS full install, new QMon campaign, actual retry call or current
+  authenticated playback was run for this change. Earlier actual OBD/audio
+  acceptance and dependency/full-suite gaps remain documented, not newly rerun.
+  See source `docs/BATCH_REMOVE_RECHURN_20261008.md`.
+
+## Retained Simple Dialer Verification: 2026-10-08
+
 - Source commit: `f7a04141` on `XEMA_MAIN/XEMA_WORKFLOW`.
 - Archive SHA256: `0da2e999b977194c3b5fcf05787302b51b3bd51f1e85f1d7eeacf48b07bbc583`.
 - Archive size: 63,137,036 bytes; 645 verified files. Exact VM-tested Manager,

@@ -1,32 +1,39 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: f7a04141fc5942f5a9a594c77c5135a1e8b66d29
+Source commit: 35ff07c0140768100e2a564b1e0a6dc630637512
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: 0da2e999b977194c3b5fcf05787302b51b3bd51f1e85f1d7eeacf48b07bbc583
-Package bytes: 63137036
+Package sha256: fc23fec59b2af48318c18ae08b05c00d901c9e9632d36eb55ddae8961c0a679b
+Package bytes: 63194918
+Package verified files: 646
+Current delivery notes: docs/BATCH_REMOVE_RECHURN_20261008.md
+Batch removal: dataset archive and per-campaign exclusion persistent across Update; uploaded/cache rows, attempts, CDR and recordings retained; scoped queued retries cancelled; started/upload/in-flight/consumer guards
+Removal security: System Admin, CSRF, configuration gate and short ReadCommitted batch-row lock shared with claims
+Current VM verification: 71 Linux backend cases, 41 isolated MariaDB checks, 9 focused Admin and 15 focused Live Angular cases; actual VM assets desktop/mobile day/night/error/cancel/busy/preview/remove flows with browser-only mutation/realtime fixtures
+Current VM data: DIAELR1 Started, target pending=0, queued=0, preview=0, blockedAnswered=1 for repeated 9001; real batches untouched; 347 CDR rows/duration aggregate 18373 unchanged
+Current rollback: /root/xema-batch-rechurn-20261008-030605; additive ArchiveBatches migration; Manager-only restart after zero calls; no SQL rollback
 Runtime: linux-x64 self-contained
 Live View: readable Normal/Dark/Auto tabs, headers, rows, status buttons, hover, counters and error/empty states; theme controls on both views
-Live View bundle: main-LTOULLG2.js sha256 fff625baa327670d75565d9f740c07d2490026e80b26f48263bdf00fa1951b92
+Live View bundle: main-KM37BT63.js sha256 315f14c324a7a05b78d09cb61de320a3e54cc643d93e6e9c2ef6baab99ee94b4
 Live View CSS: styles-2FIFOUKQ.css sha256 e230b2db243c3ff8b3ca6cd0283a93d8a47ecab0e1cdb11988bb6758b16fd49b
-Live status verification: 42 focused backend cases executed on Linux; 14 focused Angular checks; actual VM public assets at 1366/768/390/320px, four monitor tabs, contrast/hover, Auto 06:00/18:00, login day/night, error recovery and dialer states
+Live status verification: 71 focused backend cases executed on Linux; 15 focused Angular checks; actual VM public assets at 1366/768/390/320px, four monitor tabs, contrast/hover, Auto 06:00/18:00, login day/night, error recovery and Started/Waiting/Stopped states
 Theme test boundary: browser-only realtime fixtures; no real user sessions borrowed or real live counts certified
-Live status deployment: Manager.dll plus Live View, Manager-only restart after zero-call checks; original rollback /root/xema-dialer-monitor-20261007-153530
+Live status deployment: Manager.dll/DbV2.dll plus Admin/Live View; Manager-only restart after zero-call checks; current rollback above
 Theme test gap: untouched AppComponent scaffold fails full spec compilation (private Title access); isolated focused suite passed
-Manager sha256: 5814c87a600fa9f18b4cd732d6610f9a58db8bbd85119848f5700e68691196e2
-DbV2 sha256: 50d3a46fb18f9f5efda612e1c32186513f020c3553a30864743470ccc230d0ba
+Manager sha256: 3724df51923a7dc5ad6e30a2d8a91bf67901463af28ba7dcfdbabf03981f2cc8
+DbV2 sha256: 739f65f3de33889491e67cbdc029f404182674f8fdd5d6979044719b6c743b28
 Admin: VM-tested AdminUI1 with native dashboard, safe archive actions and controlled manual Rechurn
-Admin bundle: main.f0e5bb4344f94894.js sha256 33d9726ec578276558f43ac5e8da6a90fbc02eecf3d465fc8226532d9067b6e7
+Admin bundle: main.757a0c398fa02d55.js sha256 7e5ccea934a5fa0d6d72779b9ebb229ad347c58de47c7bbc204eda32fca8c1fb
 Test call: dedicated validated ID/number request, Admin CSRF, stopped-engine guard and explicit failure messages
 Dataset UI: actual uploaded-record summary, independent table sorting, Back/Refresh, responsive loading/error/retry
 Deletion: stopped/unlinked records only; uploaded rows, batches, caches and CDR history retained
 Schema: additive archive columns and Data.DialAttempts history applied automatically at Manager bootstrap
-Rechurn: outcomes/batches, preview, limits/wait interval, explicit queue/cancel; no Called resets or automatic Start
+Rechurn: outcomes/batches, actual contact preview, answered-contact exclusions, limits/wait interval, explicit queue/cancel/result count; no Called resets or automatic Start
 CDR: same-linked manual SIP source CLI/DNI/phone/recording; no invented Agent/Dialer; existing native CallId retained
 Data Portal: recording icon buttons, unmuted native audio, loading/error states, released blob URLs and CSV download errors
 Data Portal bundle: main.f593b5cb6d8235a6.js sha256 222c813e7d566e928a989445ab6788ba9fb4fcf63970c93ff99569351a533db4
-Verification: 120 focused backend / 34 focused Admin Angular checks; real VM auth/CSRF/validation/stopped guard, test dialog at 3 sizes, dataset regression at 11 sizes
-Actual Test call: VM button to 9001 connected; CDR 1791378647.122 Out/CLI1234/DNI9001/Balaram/Phone1001/Dialer5/Recorded1; campaign rows/history unchanged
+Previous verification (not newly rerun): 120 focused backend / 34 focused Admin Angular checks; real VM auth/CSRF/validation/stopped guard, test dialog at 3 sizes, dataset regression at 11 sizes
+Previous actual Test call (not newly rerun): VM button to 9001 connected; CDR 1791378647.122 Out/CLI1234/DNI9001/Balaram/Phone1001/Dialer5/Recorded1; campaign rows/history unchanged
 Previous recording verification: 8 recording-report Angular checks and 5 VM-asset desktop/mobile playback/error/download fixtures retained
 Actual VM: user manual 1001->9001 saved Out/1234/9001/1001/Recorded=1 with real originating-channel recording path
 Simple Dialer: real status reasons/pending count and session origination progress, initial/reconnect snapshot to existing Manager/TeamLead only; no invented connected=0
@@ -39,6 +46,6 @@ Live status delivery notes: source docs/DIALER_LIVE_STATUS_FIX_20261008.md
 Preserved: report SQL/calculations/access, historical rows, other portals, dependencies, dialer pacing/cache/retry
 Authenticated user audio playback acceptance: user confirmed working; actual call audio was not copied off VM
 Test gaps: three untouched legacy dataset scaffold tests fail for missing HttpClient providers; focused tests passed
-Package integrity: exact retained VM DbV2 used; earlier package binary differed from its listed DbV2 hash, now aligned
+Package integrity: exact current VM-tested Manager/DbV2/Admin/Live; retained ARI/runtime/dependencies/Agent/Data Portal/landing; safe paths, no settings/keys/logs/audio; both Admin/Live package copies match
 Previous Rechurn release: 34 Angular/9 Node and 21 actual MariaDB fixtures; all existing features retained
 Clean-machine full installation: not executed
