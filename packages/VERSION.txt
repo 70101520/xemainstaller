@@ -1,24 +1,31 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: 34b10e7aa61ddcd9bd36aadf3f5f6dfd5bdb6e17
+Source commit: 52d56222d7fdfb4d3c7ea7a2d0a4bb15d27eff1c
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: 38361ae5ea1eddbc4f99f066de460b4dad3a98eb9088d0a0148dfce37fedf087
-Package bytes: 63208742
+Package sha256: 86128b9c914b3ab6634e847185f11f025998e598fe9f070c9b976abb1e2ce347
+Package bytes: 63208627
 Package verified files: 646
-Current delivery notes: docs/REALTIME_MONITOR_FIX_20261010.md
-Current scope: authoritative Live snapshot on login/reconnect and every ten seconds; buffered events, stale-cache clearing, actual phone/task state and authoritative engine Running
-Current security: Manager/TeamLead only; team-restricted agents; no sessions/IP/credentials; anonymous HTTP 401
-Current VM verification: 13 Jema sync cases, 15 focused Live Angular cases, 75 Linux backend cases; actual login/reload/reconnect, browser-injected snapshot 503/recovery, 1366/768/390/320px, no JS errors or missing assets
-Current VM state: backend/display online=1; DIAELR1 Started/Waiting for next round; pending=11; ARI app registered; Manager/Asterisk/nginx/MariaDB active
-Current VM data: 353 CDR rows and duration aggregate 18535 unchanged; no historical claim/Called resets
-Current rollback: /root/xema-realtime-20261010-064214; Manager.dll/Live only; restart after zero channels/calls; no Asterisk/nginx restart
-Current Manager sha256: 74da59a5ad589cf997eefe1b04215c60427e628c001d25c8d024c3f92a0f5076
+Current delivery notes: docs/DIALER_SELECTION_FIX_20261010.md
+Current scope: filter same-campaign active number claims before ORDER BY/LIMIT; preserve atomic guard and own due retries; separate callable/blocked totals and explicit blocked-work reason
+Current security: existing Manager/TeamLead monitor authorization retained; anonymous snapshot HTTP 401; no sessions/IP/credentials
+Current VM verification: 77 Linux backend cases, 46 isolated MariaDB selection checks, 41 existing Rechurn/removal checks; final actual login/reload/reconnect, snapshot 503/recovery, 1366/768/390/320px; no JS errors or missing assets
+Current VM state: backend/display online=1; DIAELR1 Started/Waiting for retry; callable=0, blocked=4, queued=1; ARI registered; Manager/Asterisk/nginx/MariaDB active
+Current VM data: seven fresh automatic OBD records processed, five Answered/two NoAnswer with finalized correlated outbound CDR; five nonempty recording files; four older rows/Originated claim retained; historical CDR dumps unchanged across deployment
+Current rollback: /root/xema-selection-20261010-105641; initial /root/xema-selection-20261010-104345; Manager.dll only; zero-call checks before restart/rollback; no SQL restoration or Asterisk/nginx restart
+Current Manager sha256: 8dad488157dc8acc66aa72eccba13637008b549df44e20a331f2a799bfa5c480
 Current Live View bundle: main-YG3O23HG.js sha256 a913e848b1e08349346ae4dc3e55fee59b35600742e4627a959f71228ddc5d84
-Current package integrity: exact final VM-tested Manager/Live in both portal copies; every other archive file byte-identical to previous release; safe archive, no settings/keys/logs/audio
-Remaining dialer issue: older unresolved Originated attempt holds repeated 9001 claim and can starve pending records; not reset by monitor-only fix
+Current package integrity: exact final VM-tested Manager; every other archive file byte-identical to prior verified release, including both Live copies, dependencies/runtime/deploy; no settings/keys/logs/audio
+Remaining historical issue: older unresolved Originated attempt still safely blocks four repeated-number rows, but no longer starves other callable work; missing CDR is not guessed or automatically expired
 ARI boundary: temporary bootstrap absence also reproduced on previous binary; recovered on final deployment; no general startup fix claimed
-Current acceptance boundary: no new automatic call, predictive campaign, recording playback or clean-OS install; existing dependency advisories and untouched Jema/Live scaffold failures remain
+Current acceptance boundary: actual Type 101 Simple/OBD calls verified; no new XDQMon predictive campaign, due Rechurn call, authenticated recording playback, production-size load or clean-OS install; existing dependency advisories/full-suite scaffold gaps remain
+Current log boundary: one AgentHub OnDisconnected OperationCanceledException during forced transport interruption; reconnect/recovery passed; no zero-error guarantee
+
+Retained monitor release (2026-10-10):
+Previous monitor source: 34b10e7aa61ddcd9bd36aadf3f5f6dfd5bdb6e17
+Previous monitor package sha256: 38361ae5ea1eddbc4f99f066de460b4dad3a98eb9088d0a0148dfce37fedf087
+Monitor: authoritative snapshot on login/reconnect and every ten seconds; buffered events, stale-cache clearing, phone/task state and actual engine Running
+Previous monitor verification: 13 Jema sync, 15 focused Live Angular and 75 Linux backend cases; actual desktop/mobile login/reload/reconnect/error recovery; retained authorization/privacy; source docs/REALTIME_MONITOR_FIX_20261010.md
 
 Retained previous release notes (2026-10-08; verification below not newly rerun):
 Previous source: 35ff07c0140768100e2a564b1e0a6dc630637512

@@ -39,6 +39,9 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 - Includes Simple/OBD dialer live status and explicit no-pending/schedule/pace/
   connection reasons, protected cached snapshots and sortable monitor columns.
   Session origination progress is distinct from completed/answered CDR counts.
+- Filters blocked same-campaign number claims before selecting paced work, so
+  older unresolved rows cannot starve later fresh records. Retains atomic claims,
+  own due retries, history and Called flags; reports blocked work separately.
 - Includes the VM-tested AdminUI1 native CPU/RAM/disk, service, call/agent and
   floor-activity dashboard. No additional monitor is required for this page.
 - Its side lists show only the verified Xema components: AsterMQ, FastAGI,
@@ -84,6 +87,41 @@ Required order when `XEMA_MAIN` changes:
 5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo. Its `origin` is GitHub, not the source repo's Azure remote.
 
 ## Tested Package: 2026-10-10
+
+- Source commit: `52d56222` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `86128b9c914b3ab6634e847185f11f025998e598fe9f070c9b976abb1e2ce347`.
+- Archive: 63,208,627 bytes; 646 verified files. Exact final VM-tested Manager;
+  every other file, including all portals/runtime/deployment assets, matches the
+  prior verified package. Launcher checksum and archive updated together.
+- Number-claim eligibility is checked before ORDER BY/LIMIT, with exact existing
+  trim/hash semantics. Own due Queued retries remain eligible; the atomic unique
+  claim guard is retained. Missing/delayed CDRs are not expired or guessed.
+- 77 Linux focused backend cases, 46 isolated MariaDB selection cases and 41
+  existing MariaDB Rechurn/removal cases passed. Fixture history/calculation
+  sentinels unchanged and fixtures cleaned by their own identifiers.
+- Actual seven fresh automatic OBD records: five Answered, two NoAnswer; seven
+  finalized correlated outbound CDRs. Five answered recordings are nonempty on
+  VM, with CLI/destination/Balaram/phone 1001/Dialer 5/Recorded=true metadata.
+  Four older repeated-number rows and their unresolved attempt remain retained.
+- Final actual Live login/reload/reconnect and snapshot failure recovery passed
+  at 1366/768/390/320px, no JS errors or missing assets. Actual snapshot: Started,
+  callable=0, blocked=4, queued=1; Waiting for retry and its due time are correct.
+  Anonymous snapshot returns 401. No user queue/data reset to manufacture tests.
+- Manager SHA256: `8dad488157dc8acc66aa72eccba13637008b549df44e20a331f2a799bfa5c480`.
+  Retained Live bundle: `main-YG3O23HG.js`.
+- Manager-only deployment after zero-call checks; final backup
+  `/root/xema-selection-20261010-105641`. Existing CDR boundary dumps matched;
+  settings, portal files, dependencies and Asterisk config unchanged. Manager,
+  Asterisk, nginx and MariaDB active; campaign ARI registered.
+- One AgentHub cancellation was logged during forced transport interruption;
+  recovery passed. No claim of zero bugs/log errors. The unresolved claim needs
+  separate evidence-based investigation, not an automatic historical reset.
+- Type 101 Simple/OBD verified, not a new XDQMon predictive campaign, due Rechurn
+  call, production-size load, authenticated playback or clean-OS full install.
+  Existing dependency advisories/full-suite gaps remain. See source
+  `docs/DIALER_SELECTION_FIX_20261010.md`.
+
+## Previous Monitor Package: 2026-10-10
 
 - Source commit: `34b10e7a` on `XEMA_MAIN/XEMA_WORKFLOW`.
 - Archive SHA256: `38361ae5ea1eddbc4f99f066de460b4dad3a98eb9088d0a0148dfce37fedf087`.
