@@ -1,26 +1,42 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
-Source commit: 35ff07c0140768100e2a564b1e0a6dc630637512
+Source commit: 34b10e7aa61ddcd9bd36aadf3f5f6dfd5bdb6e17
 Package file: packages/xema-workflow-linux-x64.tgz
-Package sha256: fc23fec59b2af48318c18ae08b05c00d901c9e9632d36eb55ddae8961c0a679b
-Package bytes: 63194918
+Package sha256: 38361ae5ea1eddbc4f99f066de460b4dad3a98eb9088d0a0148dfce37fedf087
+Package bytes: 63208742
 Package verified files: 646
-Current delivery notes: docs/BATCH_REMOVE_RECHURN_20261008.md
+Current delivery notes: docs/REALTIME_MONITOR_FIX_20261010.md
+Current scope: authoritative Live snapshot on login/reconnect and every ten seconds; buffered events, stale-cache clearing, actual phone/task state and authoritative engine Running
+Current security: Manager/TeamLead only; team-restricted agents; no sessions/IP/credentials; anonymous HTTP 401
+Current VM verification: 13 Jema sync cases, 15 focused Live Angular cases, 75 Linux backend cases; actual login/reload/reconnect, browser-injected snapshot 503/recovery, 1366/768/390/320px, no JS errors or missing assets
+Current VM state: backend/display online=1; DIAELR1 Started/Waiting for next round; pending=11; ARI app registered; Manager/Asterisk/nginx/MariaDB active
+Current VM data: 353 CDR rows and duration aggregate 18535 unchanged; no historical claim/Called resets
+Current rollback: /root/xema-realtime-20261010-064214; Manager.dll/Live only; restart after zero channels/calls; no Asterisk/nginx restart
+Current Manager sha256: 74da59a5ad589cf997eefe1b04215c60427e628c001d25c8d024c3f92a0f5076
+Current Live View bundle: main-YG3O23HG.js sha256 a913e848b1e08349346ae4dc3e55fee59b35600742e4627a959f71228ddc5d84
+Current package integrity: exact final VM-tested Manager/Live in both portal copies; every other archive file byte-identical to previous release; safe archive, no settings/keys/logs/audio
+Remaining dialer issue: older unresolved Originated attempt holds repeated 9001 claim and can starve pending records; not reset by monitor-only fix
+ARI boundary: temporary bootstrap absence also reproduced on previous binary; recovered on final deployment; no general startup fix claimed
+Current acceptance boundary: no new automatic call, predictive campaign, recording playback or clean-OS install; existing dependency advisories and untouched Jema/Live scaffold failures remain
+
+Retained previous release notes (2026-10-08; verification below not newly rerun):
+Previous source: 35ff07c0140768100e2a564b1e0a6dc630637512
+Previous package sha256: fc23fec59b2af48318c18ae08b05c00d901c9e9632d36eb55ddae8961c0a679b
 Batch removal: dataset archive and per-campaign exclusion persistent across Update; uploaded/cache rows, attempts, CDR and recordings retained; scoped queued retries cancelled; started/upload/in-flight/consumer guards
 Removal security: System Admin, CSRF, configuration gate and short ReadCommitted batch-row lock shared with claims
-Current VM verification: 71 Linux backend cases, 41 isolated MariaDB checks, 9 focused Admin and 15 focused Live Angular cases; actual VM assets desktop/mobile day/night/error/cancel/busy/preview/remove flows with browser-only mutation/realtime fixtures
-Current VM data: DIAELR1 Started, target pending=0, queued=0, preview=0, blockedAnswered=1 for repeated 9001; real batches untouched; 347 CDR rows/duration aggregate 18373 unchanged
-Current rollback: /root/xema-batch-rechurn-20261008-030605; additive ArchiveBatches migration; Manager-only restart after zero calls; no SQL rollback
+Previous VM verification: 71 Linux backend cases, 41 isolated MariaDB checks, 9 focused Admin and 15 focused Live Angular cases; actual VM assets desktop/mobile day/night/error/cancel/busy/preview/remove flows with browser-only mutation/realtime fixtures
+Previous VM data: DIAELR1 Started, target pending=0, queued=0, preview=0, blockedAnswered=1 for repeated 9001; real batches untouched; 347 CDR rows/duration aggregate 18373 unchanged
+Previous rollback: /root/xema-batch-rechurn-20261008-030605; additive ArchiveBatches migration; Manager-only restart after zero calls; no SQL rollback
 Runtime: linux-x64 self-contained
 Live View: readable Normal/Dark/Auto tabs, headers, rows, status buttons, hover, counters and error/empty states; theme controls on both views
-Live View bundle: main-KM37BT63.js sha256 315f14c324a7a05b78d09cb61de320a3e54cc643d93e6e9c2ef6baab99ee94b4
+Previous Live View bundle: main-KM37BT63.js sha256 315f14c324a7a05b78d09cb61de320a3e54cc643d93e6e9c2ef6baab99ee94b4
 Live View CSS: styles-2FIFOUKQ.css sha256 e230b2db243c3ff8b3ca6cd0283a93d8a47ecab0e1cdb11988bb6758b16fd49b
 Live status verification: 71 focused backend cases executed on Linux; 15 focused Angular checks; actual VM public assets at 1366/768/390/320px, four monitor tabs, contrast/hover, Auto 06:00/18:00, login day/night, error recovery and Started/Waiting/Stopped states
 Theme test boundary: browser-only realtime fixtures; no real user sessions borrowed or real live counts certified
 Live status deployment: Manager.dll/DbV2.dll plus Admin/Live View; Manager-only restart after zero-call checks; current rollback above
 Theme test gap: untouched AppComponent scaffold fails full spec compilation (private Title access); isolated focused suite passed
-Manager sha256: 3724df51923a7dc5ad6e30a2d8a91bf67901463af28ba7dcfdbabf03981f2cc8
+Previous Manager sha256: 3724df51923a7dc5ad6e30a2d8a91bf67901463af28ba7dcfdbabf03981f2cc8
 DbV2 sha256: 739f65f3de33889491e67cbdc029f404182674f8fdd5d6979044719b6c743b28
 Admin: VM-tested AdminUI1 with native dashboard, safe archive actions and controlled manual Rechurn
 Admin bundle: main.757a0c398fa02d55.js sha256 7e5ccea934a5fa0d6d72779b9ebb229ad347c58de47c7bbc204eda32fca8c1fb

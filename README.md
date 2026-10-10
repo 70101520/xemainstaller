@@ -83,7 +83,35 @@ Required order when `XEMA_MAIN` changes:
 4. Verify archive contents, absence of site settings/secrets and SHA256. Update `PACKAGE_SHA256` in `install-xema-workflow.sh`.
 5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo. Its `origin` is GitHub, not the source repo's Azure remote.
 
-## Tested Package: 2026-10-08
+## Tested Package: 2026-10-10
+
+- Source commit: `34b10e7a` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `38361ae5ea1eddbc4f99f066de460b4dad3a98eb9088d0a0148dfce37fedf087`.
+- Archive: 63,208,742 bytes; 646 verified files. Exact final VM-tested Manager
+  and both Live View copies; every other archive file matches the prior release.
+- Fresh Live login loads existing online agents. Periodic authoritative snapshots
+  reconcile engine presence, queue counters, phone state and available task
+  timestamps. Reconnect clears stale caches and buffers incoming events.
+  Loading/disconnected/unavailable states do not present stale counts as current.
+- Manager/TeamLead authorization retained, with team-restricted agent visibility;
+  no session IDs or credentials in snapshots. Anonymous request returns 401.
+- 13 Jema sync cases, 15 focused Live Angular cases and 75 Linux backend cases
+  passed. Actual VM login/reload/reconnect and browser-injected snapshot failure
+  recovery passed at 1366/768/390/320px with no JS errors or missing assets.
+- Actual VM backend/display online count=1; DIAELR1 engine Started. Manager,
+  Asterisk, nginx and MariaDB active; dialer ARI application registered.
+- Manager SHA256: `74da59a5ad589cf997eefe1b04215c60427e628c001d25c8d024c3f92a0f5076`.
+  Live `main-YG3O23HG.js`: `a913e848b1e08349346ae4dc3e55fee59b35600742e4627a959f71228ddc5d84`.
+- Manager-only restart after zero-call checks; backup
+  `/root/xema-realtime-20261010-064214`. CDR rows=353 and duration aggregate=18535
+  unchanged. Settings, dependencies, other portals and Asterisk config retained.
+- An older unresolved Originated attempt still blocks repeated 9001 dialing;
+  claims/history were not reset. No new automatic call, recording playback,
+  predictive campaign or clean-OS full installation is claimed for this release.
+  Dependency advisories and unrelated full-suite scaffold gaps remain.
+  See source `docs/REALTIME_MONITOR_FIX_20261010.md`.
+
+## Previous Tested Package: 2026-10-08
 
 - Source commit: `35ff07c0` on `XEMA_MAIN/XEMA_WORKFLOW`.
 - Archive SHA256: `fc23fec59b2af48318c18ae08b05c00d901c9e9632d36eb55ddae8961c0a679b`.
