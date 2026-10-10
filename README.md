@@ -39,9 +39,11 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 - Includes Simple/OBD dialer live status and explicit no-pending/schedule/pace/
   connection reasons, protected cached snapshots and sortable monitor columns.
   Session origination progress is distinct from completed/answered CDR counts.
-- Filters blocked same-campaign number claims before selecting paced work, so
-  older unresolved rows cannot starve later fresh records. Retains atomic claims,
-  own due retries, history and Called flags; reports blocked work separately.
+- Processes target batches oldest first, advancing only after final attempts.
+  Failed outcomes are retained and retry only via selected Rechurn. Active
+  claims/missing CDR hold later batches; atomic claims and Called history remain.
+  Auto-stop safely saves Active=false when work is final and server channels
+  are empty; Admin polling picks up the stopped state without a manual refresh.
 - Includes the VM-tested AdminUI1 native CPU/RAM/disk, service, call/agent and
   floor-activity dashboard. No additional monitor is required for this page.
 - Its side lists show only the verified Xema components: AsterMQ, FastAGI,
@@ -87,6 +89,42 @@ Required order when `XEMA_MAIN` changes:
 5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo. Its `origin` is GitHub, not the source repo's Azure remote.
 
 ## Tested Package: 2026-10-10
+
+- Source commit: `6fc27dc4` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `e9d8462ffab75f68c9b1ea69a4ac6b474809c8ab3d316d038eeba55be1ef9c81`.
+- Archive: 63,214,063 bytes; 646 verified files. Exact VM-tested Manager and both
+  Admin copies; every other member byte-identical to the previous verified
+  release. Launcher checksum and archive are updated together.
+- Final failed outcomes advance the batch; they do not trigger endless retries.
+  Explicit Rechurn retains old attempts, limits and due time. Missing/final CDR,
+  upload/cache synchronization, current engine/configuration and empty-channel
+  guards protect completion. Existing pacing/schedules/report SQL are retained.
+- Auto-stop persists Active=false and retains configured Pace on the next
+  successful scheduled round (existing 60-second cadence). Readonly Admin
+  ten-second polling handles auto-stop, errors and stale responses safely.
+- 35 isolated VM batch/Rechurn/node-completion checks, 81 Linux compiled backend
+  assertions, 46 selection and 41 existing Rechurn/removal checks passed. 18
+  focused Admin dialer and 9 batch UI cases and production builds passed.
+- Actual Admin login/polling and browser-only auto-stop/error/recovery fixtures;
+  actual Live login/reload/reconnect/snapshot 503/recovery; screenshots inspected
+  at 1366/768/390/320px; no JS errors or failed assets in either browser run.
+- Current campaign is Started/Type101/Pace4/ARI registered, but safely held at
+  `Waiting for batch 19 call/CDR (1 unresolved)`. The older Originated claim
+  was not reset. Strict batch order intentionally replaces the previous ability
+  to skip into later batches. Four repeated-number rows remain blocked.
+- Manager SHA256: `994fd0d9b127654c0be4c40a9eaf6341b9ce4f0802c3f6e0f37cf2701fc5f861`.
+  Admin bundle: `main.d16745638be3189d.js`.
+- Backup `/root/xema-batch-flow-20261010-120822`: Manager/Admin-only restart after
+  zero-call checks; no Asterisk/nginx restart or migrations. Historical CDR and
+  attempt dumps byte-identical before/final: 365 CDR rows/duration sentinel18755.
+  Site settings/dependencies/other portals/Asterisk configuration hash-preserved.
+- Fixtures placed no physical calls. A newly completed campaign through Agent,
+  recording and Data Portal, new QMon campaign, production load and clean-OS full
+  install are not claimed. Prior real call results below are historical evidence.
+  Existing dependency advisories/full-suite gaps remain; no zero-bug/security
+  guarantee. See source `docs/BATCH_FLOW_AUTOSTOP_20261010.md`.
+
+## Previous Selection Package: 2026-10-10
 
 - Source commit: `52d56222` on `XEMA_MAIN/XEMA_WORKFLOW`.
 - Archive SHA256: `86128b9c914b3ab6634e847185f11f025998e598fe9f070c9b976abb1e2ce347`.

@@ -1,6 +1,31 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
+Source commit: 6fc27dc4c6a59b837791d772c1a1b26d710e75f5
+Package file: packages/xema-workflow-linux-x64.tgz
+Package sha256: e9d8462ffab75f68c9b1ea69a4ac6b474809c8ab3d316d038eeba55be1ef9c81
+Package bytes: 63214063
+Package verified files: 646
+Current delivery notes: docs/BATCH_FLOW_AUTOSTOP_20261010.md
+Current scope: strict oldest-batch final outcomes; failed numbers only through explicit Rechurn; safe persisted auto-stop and Admin readonly polling
+Current policy: final Answered/NoAnswer/Busy/NotReachable advances; missing CDR/active number claim/upload/cache mismatch/future retry holds next batch; no Called reset or endless automatic retries
+Current completion: matching engine/configuration/upload guards, no unfinished campaign attempts and zero ARI channels; Active=false/Pace retained; existing 60-second round cadence
+Current VM verification: 35 isolated batch/Rechurn/node-completion MariaDB checks; 81 Linux compiled backend assertions; 46 selection and 41 existing Rechurn/removal checks; 18 focused Admin dialer and 9 batch UI checks; production builds passed
+Current browser verification: actual VM Admin login/polling and browser-only auto-stop/error/recovery fixtures; actual Live login/reload/reconnect/snapshot 503/recovery; both inspected at 1366/768/390/320px; no JS/asset errors
+Current VM state: DIAELR1 Active/Started, Type101, Pace4, ARI registered; Waiting for batch 19 call/CDR (1 unresolved); four blocked fresh rows, Queued0; online count agrees at1
+Current unresolved history: old Originated CallId1791430538.289 has no correlated final CDR and still holds its claim; not guessed/released/reset; strict policy intentionally supersedes previous cross-batch skipping
+Current VM data: 365 CDR rows/duration sentinel18755; CDR boundary and entire attempt dump byte-identical before/final checks; Answered16/NoAnswer3/Originated1/Unknown1
+Current rollback: /root/xema-batch-flow-20261010-120822; Manager/Admin only, empty-channel checks before restart/rollback; no migrations, SQL restore or Asterisk/nginx restart
+Current Manager sha256: 994fd0d9b127654c0be4c40a9eaf6341b9ce4f0802c3f6e0f37cf2701fc5f861
+Current Admin bundle: main.d16745638be3189d.js sha256 995195f63817f563efa52d6e869d0a5103b37f0ff70e8f505617dddebeff966d
+Current package integrity: exact VM-tested Manager and both Admin copies; every other member byte-identical to prior release; no settings/keys/logs/audio; launcher checksum and archive updated together
+Current acceptance boundary: fixtures place no physical calls; no newly executed complete campaign/Agent/recording/Data Portal playback, new QMon campaign, production load or clean-OS installation claimed; prior real OBD results below are historical evidence
+Current remaining risks: unresolved historical CDR, existing dependency advisories/full-suite scaffold gaps and broader startup/operational issues are not certified resolved; not a full security audit
+Runtime: linux-x64 self-contained
+
+Retained previous selection release (2026-10-10; superseded cross-batch policy):
+Source repo: https://github.com/70101520/XEMA_MAIN
+Source branch: XEMA_WORKFLOW
 Source commit: 52d56222d7fdfb4d3c7ea7a2d0a4bb15d27eff1c
 Package file: packages/xema-workflow-linux-x64.tgz
 Package sha256: 86128b9c914b3ab6634e847185f11f025998e598fe9f070c9b976abb1e2ce347
