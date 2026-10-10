@@ -1,6 +1,33 @@
 XEMA Workflow Installer Package
 Source repo: https://github.com/70101520/XEMA_MAIN
 Source branch: XEMA_WORKFLOW
+Source commit: 40847fc7de4acf8fc8ab4125b3baa6c69ec92bd0
+Package file: packages/xema-workflow-linux-x64.tgz
+Package sha256: 179513cd65d9d6d57aa7e79708452f18a63711e58ebed16b1744f9953fe6cbf3
+Package bytes: 63220526
+Package verified files: 646
+Current delivery notes: docs/QUEUE_ABANDON_CRASH_FIX_20261010.md
+Current scope: contain queue-abandon capture errors; strict-schema managed capture batches; guarded recovery of initial dialer ARI handshake
+Current capture: actual queue only, parameterized required fields, separate Abandoned calls (Queue N) batch, upload lease/transaction-pinned row ID and exact counts; existing CLI/duplicate policy retained
+Current preservation: original CSV batches, historical CDR/calculations/report SQL, Called/claim/Rechurn rules, all portal/config/dependency/runtime/deploy assets unchanged
+Current ARI: retry every 30 seconds only until first Open; Stop cancels recovery; normal established transport lifecycle and AsterNET.ARI binary unchanged
+Current VM verification: 22 isolated capture/actual handler MariaDB checks; 87 compiled Linux backend cases including six startup recovery/cancellation cases; 35 strict batch, 46 selection and 41 Rechurn/removal checks
+Current actual calls: recovered automatic batch52 attempts including two Agent1001-connected/recorded calls and final NoAnswer; actual abandoned event created batch65 while original Abend.csv batch21 count stayed0
+Current final-artifact call: authorized Test call 9001 finalized as 1791638465.438, Agent Balaram/Phone1001/Queue1, TalkTime25/ConnectedTime30/cause16/Recorded1, recording33594bytes; Manager active/NRestarts0
+Current reporting: actual outbound/recording reports include connected OBD call1791637357.368, recording API HTTP200/audio-wav with valid RIFF, visible Data Portal Play control and actual browser playback; no workstation audio saved
+Current Live boundary: authenticated actual snapshot reflects one online agent and Started/unresolved-CDR reason; full browser reconnect/reload rerun blocked by existing Balu session, no force logout; UI unchanged
+Current unresolved history: crash-time batch52 CallId1791635795.334 and old1791430538.289 lack final correlated CDR; claims retained, no guessed completion/reset/replay; fresh pending0 is not full completion
+Current rollback: /root/xema-selection-20261010-131838 (final); initial original backup /root/xema-selection-20261010-125326; Manager only, zero-call checks, no Asterisk/nginx restart or SQL restoration
+Current Manager sha256: f60fb0b54e3c6654b199cabbd7a0ac1575d3538ee984b3805b37e39b93711a8f
+Current data integrity: historical CDR boundary and campaign attempt dumps byte-identical across final deployment/Test call; fixture CDR count/duration sentinels unchanged
+Current package integrity: exact final VM-tested Manager; all other645files byte-identical to previous archive; safe member paths/types, no site settings/keys/logs/audio; launcher checksum updated with archive
+Current acceptance boundary: actual Type101 OBD/Agent/report/recording tested; no new QMon campaign, production load, complete clean-OS installation or full security audit claimed
+Current remaining risks: unresolved historical CDR, existing dependency advisories/full-suite scaffold gaps and unrelated startup/SQL/operational issues remain separate
+Runtime: linux-x64 self-contained
+
+Retained previous strict-batch release (2026-10-10):
+Source repo: https://github.com/70101520/XEMA_MAIN
+Source branch: XEMA_WORKFLOW
 Source commit: 6fc27dc4c6a59b837791d772c1a1b26d710e75f5
 Package file: packages/xema-workflow-linux-x64.tgz
 Package sha256: e9d8462ffab75f68c9b1ea69a4ac6b474809c8ab3d316d038eeba55be1ef9c81

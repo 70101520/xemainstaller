@@ -44,6 +44,12 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
   claims/missing CDR hold later batches; atomic claims and Called history remain.
   Auto-stop safely saves Active=false when work is final and server channels
   are empty; Admin polling picks up the stopped state without a manual refresh.
+- Captures abandoned calls in a separate managed queue batch with strict required
+  fields, upload/transaction guards and exact counts; capture errors no longer
+  terminate Manager. Uploaded CSV batches and existing CDR/report logic remain.
+- Recovers failed/stuck initial Simple/OBD and QMon ARI handshakes every 30 seconds
+  until the first Open event. Stop cancels recovery; established connections keep
+  their existing transport lifecycle and the ARI library binary is unchanged.
 - Includes the VM-tested AdminUI1 native CPU/RAM/disk, service, call/agent and
   floor-activity dashboard. No additional monitor is required for this page.
 - Its side lists show only the verified Xema components: AsterMQ, FastAGI,
@@ -89,6 +95,40 @@ Required order when `XEMA_MAIN` changes:
 5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo. Its `origin` is GitHub, not the source repo's Azure remote.
 
 ## Tested Package: 2026-10-10
+
+- Source commit: `40847fc7` on `XEMA_MAIN/XEMA_WORKFLOW`.
+- Archive SHA256: `179513cd65d9d6d57aa7e79708452f18a63711e58ebed16b1744f9953fe6cbf3`.
+- Contains the exact VM-tested Manager SHA256
+  `f60fb0b54e3c6654b199cabbd7a0ac1575d3538ee984b3805b37e39b93711a8f`.
+  All other 645 files are byte-identical to the prior verified archive.
+- Fixes the actual queue-abandon crash caused by missing required BatchId/flags.
+  Managed capture batches are separate from uploaded CSV batches; concurrent
+  row IDs/counts, queue filtering, database-error containment and recovery pass.
+- Adds guarded initial-ARI recovery only until the first Open event. Stopped
+  dialers cannot reconnect through this recovery; the ARI library is unchanged.
+- Final-artifact VM checks passed: 22 capture/handler, 87 compiled backend,
+  35 batch/completion, 46 selection and 41 Rechurn/removal cases. Fixture CDR
+  count/duration sentinels and final historical CDR/attempt dumps are unchanged.
+- Actual laptop test call 9001 finalized as `1791638465.438`, Agent Balaram,
+  Phone1001, Queue1, TalkTime25, ConnectedTime30, Recorded1; nonempty recording.
+  Manager stayed active with NRestarts0. Actual outbound/recording reports and
+  authenticated WAV playback/visible browser Play controls also passed.
+- Original `Abend.csv` batch21 stayed at zero; an actual abandoned call created
+  separate batch65 with one valid record. No CSV/history reset was performed.
+- Live's actual authenticated snapshot was checked. A full fresh browser
+  reconnect/reload rerun was blocked by Balu's existing session; it was not
+  force-logged out. All portal UI assets retain their prior verification.
+- Missing final CDRs `1791635795.334` and `1791430538.289` remain safely unresolved.
+  No automatic claim expiry, replay or fabricated completion was introduced.
+- Final Manager-only rollback: `/root/xema-selection-20261010-131838`;
+  original pre-fix backup: `/root/xema-selection-20261010-125326`.
+  Empty-channel/call checks preceded restarts. No Asterisk/nginx restart,
+  migrations, site-config changes or SQL restoration.
+- See source `docs/QUEUE_ABANDON_CRASH_FIX_20261010.md` for full scope and limits.
+  No new QMon campaign, production-load test, clean-OS full installation or
+  full security audit is claimed; existing dependency/scaffold risks remain.
+
+## Previous Strict-Batch Package: 2026-10-10
 
 - Source commit: `6fc27dc4` on `XEMA_MAIN/XEMA_WORKFLOW`.
 - Archive SHA256: `e9d8462ffab75f68c9b1ea69a4ac6b474809c8ab3d316d038eeba55be1ef9c81`.
