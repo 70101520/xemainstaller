@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/main/releases/20261030-rc1/xema-workflow-linux-x64.tgz}"
-PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52}"
+PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261030-2/releases/20261030-rc1-install2/xema-workflow-linux-x64.tgz}"
+PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-56ead83ba4d6165b4cade0a2fd0e3757345e64718628c8f5201ea235be5b8c03}"
 
 SKIP_BASE=0
 SKIP_UPGRADE=0
@@ -211,6 +211,13 @@ run_base_install() {
   test -s "$workdir/package/deploy/install-xema-base.sh"
   test -s "$workdir/package/deploy/configure-xema-base.py"
   test -s "$workdir/package/deploy/xema-base-assets.lock.json"
+  local site_settings
+  local -a site_values
+  site_settings="$(python3 "$workdir/package/deploy/configure-xema-base.py" settings)" || return 1
+  mapfile -t site_values <<< "$site_settings"
+  [ "${#site_values[@]}" -eq 3 ] || { echo 'Invalid detected site settings.' >&2; return 1; }
+  export XEMA_SERVER_IP="${site_values[0]}" XEMA_PUBLIC_HOST="${site_values[1]}" XEMA_INSTALL_ADMIN="${site_values[2]}"
+  printf 'Local XEMA address: https://%s | Linux Admin: %s\n' "$XEMA_PUBLIC_HOST" "$XEMA_INSTALL_ADMIN"
   echo "Running the reviewed package-local fresh base installer..."
   bash "$workdir/package/deploy/install-xema-base.sh" "$workdir/package"
 }

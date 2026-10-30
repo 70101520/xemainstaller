@@ -16,9 +16,15 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 
 This own-GitHub entrypoint installs the complete frozen XEMA package, database/
 accounts, dependencies, portals and services. It does not execute the boss's
-installer. Enter the real server IP/DNS and trusted SIP-provider/LAN/VPN CIDRs
-when asked. The invoking sudo user is the Linux Admin; root-only invocation asks
-for an existing Linux Admin account. Do not guess SIP networks or allow `/0`.
+installer. Local IPv4 and a local TLS certificate are automatic; the invoking
+sudo user (or root for direct root installation) is the Linux Admin. No IP,
+Admin or SIP-network questions are asked. No new Linux password is created.
+
+Set the server IP in Netplan first. OpenVPN/BSNL routes, PJSIP/SIP configuration,
+GUI trunks/agents/IVR and report SQL remain manual. Existing firewall policy is
+preserved, not enabled/disabled/reset; review access rules separately before
+public exposure. Clients still need to trust the local certificate. An IP
+change later needs URL/certificate maintenance, not a fresh reinstall.
 
 The current production baseline is RC1 with known open gaps. Read the warning
 and type `INSTALL` to explicitly accept that rollout. No silent qualification
@@ -33,22 +39,27 @@ For a **separate fresh dev/staging server**, not a live customer server:
 curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install-xema.sh | sudo bash -s -- -d
 ```
 
-Production and dev have independent commit/checksum pins. Initially both use the
-same tested RC1 archive; future dev publication does not automatically move the
+Production and dev have independent version/checksum pins. Both use the
+same frozen RC1 application with the install2 bootstrap update; future dev publication does not automatically move the
 production pin or compile unverified source during installation.
-See [bootstrap verification and version](bootstrap/20261030-1/README.md).
+See [bootstrap verification and version](bootstrap/20261030-2/README.md).
 
 ## Frozen Package
 
-Current frozen release: **20261030-RC1**, Ubuntu Server **24.04 LTS AMD64**.
+Current application: **20261030-RC1**; installer: **20261030-RC1-install2**.
+Ubuntu Server **24.04 LTS AMD64**.
 Source checkpoint: `d0f301405f273349986f5228dcf3105092a7dcb8`.
 Read [the frozen installation guide](releases/20261030-rc1/README.md) and
 [release notes / open gaps](releases/20261030-rc1/RELEASE_NOTES.md) first.
 This is an operator-requested **unqualified fresh production rollout**, not a
 passed clean-install/recovery acceptance or a production-certified release.
 
-The root launcher now points to that exact frozen archive. The paired archive
-SHA256 is `8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52`.
+The root launcher points to the new [installer-only snapshot](releases/20261030-rc1-install2/README.md).
+Its paired archive SHA256 is
+`56ead83ba4d6165b4cade0a2fd0e3757345e64718628c8f5201ea235be5b8c03`.
+Only the installer helper and payload manifest differ from the original RC1
+archive; all backend and portal files are unchanged. Original frozen paths/tags
+are retained, not overwritten.
 Download, verify both launcher/archive hashes and use the guide's explicit
 `--accept-unqualified-production` option only for the requested fresh rollout.
 Without that option the candidate remains blocked in normal production mode.
@@ -58,7 +69,9 @@ Do not use historical `-d -vvv` with the advanced workflow launcher. `-d` above
 belongs to the new `install-xema.sh` entrypoint. For review-first installation,
 download/inspect the entrypoint before running it, or use the frozen guide.
 The full installer restarts Asterisk/Manager. It refuses an existing PBX/site
-and requires explicit trusted SIP-provider/LAN/VPN CIDRs; do not run over calls.
+and must not run over calls. The short entrypoint preserves the firewall;
+advanced managed firewall mode requires explicit trusted SIP-provider/LAN/VPN
+CIDRs (`XEMA_FIREWALL_MODE=managed`, `XEMA_SIP_CIDRS=...`).
 
 ## Upgrade Existing Base Install
 

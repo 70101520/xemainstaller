@@ -10,7 +10,8 @@ usage() {
   printf '%s\n' 'XEMA full fresh installation: Ubuntu Server 24.04 AMD64.' \
     'Default: frozen production baseline. -d / --dev: isolated dev/staging.' \
     '--verify-package-only: download/check only; never install or restart.' \
-    'Site IP/DNS and trusted SIP networks are requested through /dev/tty.' \
+    'Local IP/certificate and sudo-user/root Admin are selected automatically.' \
+    'Netplan, VPN, routing and existing firewall policy are not changed.' \
     'This is not an existing-site upgrade command.'
 }
 
@@ -34,16 +35,16 @@ select_channel() {
   # Independent pins: updating dev must never move the production baseline.
   case "$channel" in
     production)
-      release=20261030-RC1
-      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/090b24e91b17be0c8ee8d3b1c422729567e8a4a9/releases/20261030-rc1
-      launcher_sha=55aa1ecff18d6f3578ebe543c52dbe797188e60670eedeeedaaad92cc9c06b1d
-      package_sha=8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52
+      release=20261030-RC1-install2
+      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261030-2/releases/20261030-rc1-install2
+      launcher_sha=926ce0e00fb91ea9c240287c6aeb89fee46630ea137d6b96401e505a475842d6
+      package_sha=56ead83ba4d6165b4cade0a2fd0e3757345e64718628c8f5201ea235be5b8c03
       ;;
     dev)
-      release=20261030-RC1-test
-      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/090b24e91b17be0c8ee8d3b1c422729567e8a4a9/releases/20261030-rc1
-      launcher_sha=55aa1ecff18d6f3578ebe543c52dbe797188e60670eedeeedaaad92cc9c06b1d
-      package_sha=8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52
+      release=20261030-RC1-install2-test
+      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261030-2/releases/20261030-rc1-install2
+      launcher_sha=926ce0e00fb91ea9c240287c6aeb89fee46630ea137d6b96401e505a475842d6
+      package_sha=56ead83ba4d6165b4cade0a2fd0e3757345e64718628c8f5201ea235be5b8c03
       ;;
     *) echo 'Unknown install channel.' >&2; return 1 ;;
   esac
@@ -62,29 +63,16 @@ check_install_host() {
   fi
 }
 
-read_setting() {
-  local name="$1" prompt="$2" value
-  if [ -n "${!name:-}" ]; then return 0; fi
-  if ! read -r -p "$prompt" value < /dev/tty; then
-    echo "Missing $name: use an interactive terminal or explicitly supply the site environment settings." >&2
-    return 1
-  fi
-  [ -n "$value" ] || { echo "$name cannot be empty." >&2; return 1; }
-  printf -v "$name" '%s' "$value"
-}
-
 prepare_settings() {
-  XEMA_PUBLIC_HOST="${XEMA_PUBLIC_HOST:-${XEMA_SERVER_IP:-}}"
-  XEMA_SIP_CIDRS="${XEMA_SIP_CIDRS:-}"
-  if [ -n "${SUDO_USER:-}" ] && [ "$SUDO_USER" != root ]; then
-    XEMA_INSTALL_ADMIN="$SUDO_USER"
-  else
-    XEMA_INSTALL_ADMIN="${XEMA_INSTALL_ADMIN:-}"
-  fi
-  read_setting XEMA_PUBLIC_HOST 'Server IP/DNS (without https://): '
-  read_setting XEMA_SIP_CIDRS 'Trusted SIP-provider/LAN/VPN CIDRs, comma-separated: '
-  read_setting XEMA_INSTALL_ADMIN 'Existing Linux administrator username: '
-  export XEMA_PUBLIC_HOST XEMA_SIP_CIDRS XEMA_INSTALL_ADMIN
+  export XEMA_FIREWALL_MODE="${XEMA_FIREWALL_MODE:-preserve}"
+  case "$XEMA_FIREWALL_MODE" in
+    preserve) ;;
+    managed)
+      [ -n "${XEMA_SIP_CIDRS:-}" ] || { echo 'Managed firewall mode requires XEMA_SIP_CIDRS.' >&2; return 1; }
+      ;;
+    *) echo 'XEMA_FIREWALL_MODE must be preserve or managed.' >&2; return 1 ;;
+  esac
+  echo 'Netplan/VPN/routing are manual. Existing firewall policy is preserved unless managed mode was explicitly configured.'
 }
 
 confirm_rollout() {
@@ -118,30 +106,6 @@ ensure_dependencies() {
   done
 }
 
-validate_settings() {
-  python3 - "$XEMA_PUBLIC_HOST" "$XEMA_SIP_CIDRS" "$XEMA_INSTALL_ADMIN" <<'PY'
-import ipaddress, re, sys
-host, cidrs, admin = sys.argv[1:]
-if not re.fullmatch(r'[A-Za-z0-9][A-Za-z0-9.-]*', host):
-    raise SystemExit('Invalid server IP/DNS; do not include https:// or a path.')
-entries = cidrs.split(',')
-if not cidrs.strip() or any(not entry.strip() for entry in entries):
-    raise SystemExit('Trusted SIP CIDRs must be explicitly supplied without empty entries.')
-try:
-    networks = [ipaddress.ip_network(entry.strip(), strict=False) for entry in entries]
-except ValueError:
-    raise SystemExit('Invalid SIP CIDR; use actual provider IP /32 and authorized LAN/VPN networks.')
-if any(network.prefixlen == 0 for network in networks):
-    raise SystemExit('Unrestricted SIP access (0.0.0.0/0 or ::/0) is refused.')
-if not re.fullmatch(r'[A-Za-z_][A-Za-z0-9_.-]*\$?', admin):
-    raise SystemExit('Invalid Linux administrator username.')
-PY
-  getent -- passwd "$XEMA_INSTALL_ADMIN" >/dev/null || {
-    echo 'Administrator must be an existing Linux account; no account/password is created by this prompt.' >&2
-    return 1
-  }
-}
-
 cleanup() {
   if [ -n "$workdir" ]; then rm -rf -- "$workdir"; fi
 }
@@ -167,7 +131,6 @@ main() {
     confirm_rollout
   fi
   ensure_dependencies
-  if [ "$verify_only" -ne 1 ]; then validate_settings; fi
   workdir="$(mktemp -d /tmp/xema-bootstrap.XXXXXX)"
   trap cleanup EXIT
   run_launcher
