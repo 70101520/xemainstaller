@@ -6,7 +6,39 @@ One-command installer for the XEMA workflow build maintained from:
 - Source branch: `XEMA_WORKFLOW`
 - Installer repo: `https://github.com/70101520/xemainstaller`
 
-## Install
+## Production Install
+
+On a **fresh Ubuntu Server 24.04 AMD64** host:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install-xema.sh | sudo bash
+```
+
+This own-GitHub entrypoint installs the complete frozen XEMA package, database/
+accounts, dependencies, portals and services. It does not execute the boss's
+installer. Enter the real server IP/DNS and trusted SIP-provider/LAN/VPN CIDRs
+when asked. The invoking sudo user is the Linux Admin; root-only invocation asks
+for an existing Linux Admin account. Do not guess SIP networks or allow `/0`.
+
+The current production baseline is RC1 with known open gaps. Read the warning
+and type `INSTALL` to explicitly accept that rollout. No silent qualification
+override, default/shared site password or historical data is imported. Configure
+the site's trunks, phones, agents, IVR and manual reports after installation.
+
+## Dev / Staging Install
+
+For a **separate fresh dev/staging server**, not a live customer server:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install-xema.sh | sudo bash -s -- -d
+```
+
+Production and dev have independent commit/checksum pins. Initially both use the
+same tested RC1 archive; future dev publication does not automatically move the
+production pin or compile unverified source during installation.
+See [bootstrap verification and version](bootstrap/20261030-1/README.md).
+
+## Frozen Package
 
 Current frozen release: **20261030-RC1**, Ubuntu Server **24.04 LTS AMD64**.
 Source checkpoint: `d0f301405f273349986f5228dcf3105092a7dcb8`.
@@ -22,7 +54,9 @@ Download, verify both launcher/archive hashes and use the guide's explicit
 Without that option the candidate remains blocked in normal production mode.
 For isolated staging, use `--staging`; never combine the two modes.
 
-Do not use the historical `-d -vvv` or pipe an unchecked remote script to sudo.
+Do not use historical `-d -vvv` with the advanced workflow launcher. `-d` above
+belongs to the new `install-xema.sh` entrypoint. For review-first installation,
+download/inspect the entrypoint before running it, or use the frozen guide.
 The full installer restarts Asterisk/Manager. It refuses an existing PBX/site
 and requires explicit trusted SIP-provider/LAN/VPN CIDRs; do not run over calls.
 
@@ -106,6 +140,9 @@ Required order when `XEMA_MAIN` changes:
 3. Build a new versioned `releases/<version>/xema-workflow-linux-x64.tgz` from the same tested backend/portal artifacts, using `deploy/Build-XemaWorkflowPackage.ps1` in the source repo. Never overwrite a frozen release.
 4. Verify archive contents, absence of site settings/secrets and SHA256. Update the paired launcher URL/checksum and `SHA256SUMS` together. Preserve truthful qualification status; operator risk acceptance is not a passing test.
 5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo, updating the root launcher only to that versioned release. Its `origin` is GitHub, not the source repo's Azure remote.
+6. Update only the intended channel pin in source `deploy/install-xema.sh`; test
+   it on staging, then publish the identical entrypoint and a new immutable
+   bootstrap snapshot. A dev update must not silently change production.
 
 ## Historical Package: 2026-10-10
 
