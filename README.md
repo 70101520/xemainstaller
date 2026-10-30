@@ -8,27 +8,40 @@ One-command installer for the XEMA workflow build maintained from:
 
 ## Install
 
-Run on a fresh Ubuntu 22.04 XEMA server:
+Current frozen release: **20261030-RC1**, Ubuntu Server **24.04 LTS AMD64**.
+Source checkpoint: `d0f301405f273349986f5228dcf3105092a7dcb8`.
+Read [the frozen installation guide](releases/20261030-rc1/README.md) and
+[release notes / open gaps](releases/20261030-rc1/RELEASE_NOTES.md) first.
+This is an operator-requested **unqualified fresh production rollout**, not a
+passed clean-install/recovery acceptance or a production-certified release.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install-xema-workflow.sh | sudo bash -s -- -d -vvv
-```
+The root launcher now points to that exact frozen archive. The paired archive
+SHA256 is `8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52`.
+Download, verify both launcher/archive hashes and use the guide's explicit
+`--accept-unqualified-production` option only for the requested fresh rollout.
+Without that option the candidate remains blocked in normal production mode.
+For isolated staging, use `--staging`; never combine the two modes.
 
-The script downloads and verifies the workflow package before running the official
-XEMA base installer, then applies the verified package. Use a maintenance window;
-the full installer restarts Asterisk and Manager. Do not run it over live calls.
+Do not use the historical `-d -vvv` or pipe an unchecked remote script to sudo.
+The full installer restarts Asterisk/Manager. It refuses an existing PBX/site
+and requires explicit trusted SIP-provider/LAN/VPN CIDRs; do not run over calls.
 
 ## Upgrade Existing Base Install
 
-If the official base install is already done:
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install-xema-workflow.sh | sudo bash -s -- --skip-base
-```
+An existing production upgrade is **not qualified by RC1**. The fresh-rollout
+risk override cannot combine with `--skip-base`. Use a separately reviewed/tested
+upgrade with full database/recording/site-config backup and recovery evidence.
+Application rollback is not a database restore or a no-data-loss promise.
 
 ## What It Does
 
-- Runs the official installer from `xema-in/install`.
+- Runs the reviewed package-local Ubuntu 24.04 base setup with pinned component
+  assets, unique site credentials and schema-scoped database access.
+- Ships the exact tested .NET 10 / EF10 backend and native Hold module source.
+- Includes the worker-schema/Ava ARI credential correction. Auxiliary worker
+  Agent/Hold metadata parity and Agent/Live heartbeat stability remain open.
+- Leaves site report registration manual; the original SOUTH SQL is only an
+  optional reference, never automatic report creation.
 - Backs up `/var/lib/xema/manager` to `/root/xema-manager-backup-<timestamp>`.
 - Deploys the self-contained Linux x64 Manager package.
 - Preserves local `appsettings*.json`.
@@ -90,11 +103,11 @@ Required order when `XEMA_MAIN` changes:
 
 1. Back up, deploy and test the affected workflow on the test VM. Do not publish a failed or deferred change.
 2. Commit/push the verified source only to `XEMA_MAIN`'s `github/XEMA_WORKFLOW`; never contact its official Azure `origin`.
-3. Build `packages/xema-workflow-linux-x64.tgz` from the same tested backend/portal artifacts, using `deploy/Build-XemaWorkflowPackage.ps1` in the source repo.
-4. Verify archive contents, absence of site settings/secrets and SHA256. Update `PACKAGE_SHA256` in `install-xema-workflow.sh`.
-5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo. Its `origin` is GitHub, not the source repo's Azure remote.
+3. Build a new versioned `releases/<version>/xema-workflow-linux-x64.tgz` from the same tested backend/portal artifacts, using `deploy/Build-XemaWorkflowPackage.ps1` in the source repo. Never overwrite a frozen release.
+4. Verify archive contents, absence of site settings/secrets and SHA256. Update the paired launcher URL/checksum and `SHA256SUMS` together. Preserve truthful qualification status; operator risk acceptance is not a passing test.
+5. Commit/push the launcher and matching archive together to this user's own installer GitHub repo, updating the root launcher only to that versioned release. Its `origin` is GitHub, not the source repo's Azure remote.
 
-## Tested Package: 2026-10-10
+## Historical Package: 2026-10-10
 
 - Source commit: `40847fc7` on `XEMA_MAIN/XEMA_WORKFLOW`.
 - Archive SHA256: `179513cd65d9d6d57aa7e79708452f18a63711e58ebed16b1744f9953fe6cbf3`.

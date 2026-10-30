@@ -1,0 +1,16 @@
+Release=20261030-RC1
+SourceCommit=d0f301405f273349986f5228dcf3105092a7dcb8
+RuntimeSourceCommit=7a6b8358e0ee04ac71cea776a55a82714a37f2c3
+SourceBranch=XEMA_WORKFLOW
+Qualification=staging-only
+Rollout=operator-accepted-unqualified-fresh-production
+ProductionApproved=false
+Runtime=.NET 10.0.14 / EF Core 10
+ManagerSha256=351606e4369dc59d27f339529443148ed14cd62f8b2f3a0d82dfde8fc9b2d9c4
+ArchiveSha256=8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52
+LauncherSha256=55aa1ecff18d6f3578ebe543c52dbe797188e60670eedeeedaaad92cc9c06b1d
+AutomaticReportRegistration=false
+FreshCleanInstallVerified=false
+AuxiliaryWorkerMetadataParityVerified=false
+InstallerVerifyOnlyChecks=33
+LocalPackageChecks=23

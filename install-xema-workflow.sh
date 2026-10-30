@@ -1,16 +1,30 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -Eeuo pipefail
 
-OFFICIAL_INSTALL_URL="${XEMA_BASE_INSTALL_URL:-https://raw.githubusercontent.com/xema-in/install/master/install-xema.sh}"
-PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/main/packages/xema-workflow-linux-x64.tgz}"
-PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-179513cd65d9d6d57aa7e79708452f18a63711e58ebed16b1744f9953fe6cbf3}"
+PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/main/releases/20261030-rc1/xema-workflow-linux-x64.tgz}"
+PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52}"
 
 SKIP_BASE=0
 SKIP_UPGRADE=0
+STAGING=0
+ACCEPT_UNQUALIFIED_PRODUCTION=0
+VERIFY_ONLY=0
 BASE_ARGS=()
 
 while [ "$#" -gt 0 ]; do
   case "$1" in
+    --staging)
+      STAGING=1
+      shift
+      ;;
+    --accept-unqualified-production)
+      ACCEPT_UNQUALIFIED_PRODUCTION=1
+      shift
+      ;;
+    --verify-package-only)
+      VERIFY_ONLY=1
+      shift
+      ;;
     --skip-base)
       SKIP_BASE=1
       shift
@@ -38,9 +52,35 @@ while [ "$#" -gt 0 ]; do
   esac
 done
 
-if [ "$(id -u)" -ne 0 ]; then
+if [ "$ACCEPT_UNQUALIFIED_PRODUCTION" -eq 1 ]; then
+  if [ "$STAGING" -eq 1 ] || [ "$SKIP_BASE" -eq 1 ] || [ "$SKIP_UPGRADE" -eq 1 ]; then
+    echo '--accept-unqualified-production is only for an explicitly accepted fresh installation; cannot combine with --staging, --skip-base or --skip-upgrade.' >&2
+    exit 1
+  fi
+fi
+if [ "$VERIFY_ONLY" -eq 1 ] && [ "$SKIP_UPGRADE" -eq 1 ]; then
+  echo '--verify-package-only cannot skip package verification.' >&2
+  exit 1
+fi
+if [ "$SKIP_UPGRADE" -eq 1 ] && [ "$STAGING" -ne 1 ]; then
+  echo 'Production installations cannot bypass the qualified workflow package.' >&2
+  exit 1
+fi
+if [ "$STAGING" -ne 1 ]; then
+  for argument in "${BASE_ARGS[@]}"; do
+    if [[ "$argument" =~ ^-[^-]*d ]]; then
+      echo 'Dev base installations require explicit --staging; production must not use -d.' >&2
+      exit 1
+    fi
+  done
+fi
+if [ "${#BASE_ARGS[@]}" -gt 0 ]; then
+  echo 'Unsupported base arguments: the reviewed package-local installer does not accept legacy/unknown options.' >&2
+  exit 1
+fi
+if [ "$VERIFY_ONLY" -ne 1 ] && [ "$(id -u)" -ne 0 ]; then
   echo "Run as root, for example:" >&2
-  echo "  curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install-xema-workflow.sh | sudo bash -s -- -d -vvv" >&2
+  echo "  sudo bash install-xema-workflow.sh --package-file reviewed-release.tgz --package-sha256 REVIEWED_SHA256" >&2
   exit 1
 fi
 
@@ -61,6 +101,10 @@ timestamp="$(date +%Y%m%d-%H%M%S)"
 workdir="$(mktemp -d /tmp/xema-workflow-install.XXXXXX)"
 backup_dir=""
 deploy_started=0
+manager_was_active=0
+manager_was_enabled=0
+started_workers=()
+enabled_workers=()
 config_backup=""
 config_paths=(/etc/nginx/sites-available/xema.nginx /etc/nginx/snippets/xema-proxy-security.conf
   /etc/ssl/certs/certificate.pem /etc/ssl/private/key.pem
@@ -72,10 +116,64 @@ cleanup() {
   rm -rf "$workdir"
 }
 
+check_calls() {
+  local counts channels
+  if systemctl is-active --quiet asterisk || pgrep -x asterisk >/dev/null; then
+    counts="$(asterisk -rx 'core show channels count')" || return 1
+    grep -qx '0 active channels' <<< "$counts" || return 1
+    grep -qx '0 active calls' <<< "$counts" || return 1
+    channels="$(asterisk -rx 'core show channels concise')" || return 1
+    [ -z "$channels" ] || return 1
+  fi
+}
+
+start_manager() {
+  systemctl cat xema-manager >/dev/null 2>&1 || return 1
+  if systemctl is-failed --quiet xema-manager; then
+    systemctl reset-failed xema-manager || return 1
+  fi
+  systemctl start xema-manager || return 1
+  systemctl enable xema-manager
+}
+
+check_websocket_module() {
+  local modules
+  modules="$(asterisk -rx 'module show like websocket')" || return 1
+  grep -Fq 'res_http_websocket.so' <<< "$modules"
+}
+
+preflight() {
+  . /etc/os-release
+  [ "$ID" = ubuntu ] && [[ "$VERSION_ID" = 22.04 || "$VERSION_ID" = 24.04 ]] || {
+    echo 'This package requires a reviewed Ubuntu 22.04/24.04 host.' >&2; return 1;
+  }
+  [ "$(uname -m)" = x86_64 ] || { echo 'This package requires x86-64/AMD64.' >&2; return 1; }
+  if [ "$SKIP_BASE" -ne 1 ] && [ -s /var/lib/xema/manager/appsettings.json ]; then
+    echo 'Existing XEMA detected: base reinstall refused. Use a reviewed --skip-base upgrade with full backups.' >&2
+    return 1
+  fi
+  check_calls || { echo 'Installation deferred: calls active or call-state check failed.' >&2; return 1; }
+  if [ "$SKIP_BASE" -eq 1 ] && [ "${XEMA_REPLACE_STOCK_NGINX:-0}" != 1 ]; then
+    local site
+    site="$(readlink -f /etc/nginx/sites-enabled/xema.nginx)"
+    if [ ! -f "$site" ] || ! grep -q 'XEMA managed security configuration v1' "$site"; then
+      echo 'Custom/missing nginx layout requires explicit operator review before upgrade; no service was stopped.' >&2
+      return 1
+    fi
+  fi
+}
+
 rollback() {
-  local exit_code=$?
+  local exit_code="${1:-$?}"
+  trap - ERR EXIT
   if [ "$deploy_started" -eq 1 ] && [ -n "$backup_dir" ] && [ -d "$backup_dir" ]; then
+    if ! check_calls; then
+      echo "Rollback deferred: calls active or call-state check failed. Retain $backup_dir and $config_backup for manual recovery." >&2
+      exit "$exit_code"
+    fi
     echo "Install failed. Restoring backup: $backup_dir" >&2
+    for service in "${started_workers[@]}"; do systemctl stop "$service" >/dev/null 2>&1 || true; done
+    for service in "${enabled_workers[@]}"; do systemctl disable "$service" >/dev/null 2>&1 || true; done
     systemctl stop xema-manager >/dev/null 2>&1 || true
     rm -rf /var/lib/xema/manager
     cp -a "$backup_dir" /var/lib/xema/manager
@@ -85,7 +183,8 @@ rollback() {
     done
     systemctl daemon-reload >/dev/null 2>&1 || true
     systemctl reset-failed xema-manager >/dev/null 2>&1 || true
-    systemctl start xema-manager >/dev/null 2>&1 || true
+    if [ "$manager_was_active" -eq 1 ]; then systemctl start xema-manager >/dev/null 2>&1 || true; fi
+    if [ "$manager_was_enabled" -ne 1 ]; then systemctl disable xema-manager >/dev/null 2>&1 || true; fi
     nginx -t && systemctl reload nginx || true
     systemctl restart asterisk || true
   fi
@@ -93,22 +192,27 @@ rollback() {
   exit "$exit_code"
 }
 
-trap rollback ERR
-trap cleanup EXIT
+finish_install() {
+  local exit_code=$?
+  trap - EXIT
+  if [ "$exit_code" -ne 0 ]; then rollback "$exit_code"; fi
+  cleanup
+}
+
+trap 'rollback $?' ERR
+trap finish_install EXIT
 
 run_base_install() {
   if [ "$SKIP_BASE" -eq 1 ]; then
-    echo "Skipping official base install."
+    echo "Skipping fresh base setup."
     return 0
   fi
 
-  echo "Downloading official XEMA base installer..."
-  local base_script="$workdir/install-xema.sh"
-  curl -fsSL "$OFFICIAL_INSTALL_URL" -o "$base_script"
-  chmod +x "$base_script"
-
-  echo "Running official XEMA base installer..."
-  bash "$base_script" "${BASE_ARGS[@]}"
+  test -s "$workdir/package/deploy/install-xema-base.sh"
+  test -s "$workdir/package/deploy/configure-xema-base.py"
+  test -s "$workdir/package/deploy/xema-base-assets.lock.json"
+  echo "Running the reviewed package-local fresh base installer..."
+  bash "$workdir/package/deploy/install-xema-base.sh" "$workdir/package"
 }
 
 download_package() {
@@ -139,6 +243,46 @@ PY
   test -s "$workdir/package/deploy/configure-xema-security.py"
   test -s "$workdir/package/deploy/xema-secure.nginx"
   test -s "$workdir/package/SECURITY_BASELINE.txt"
+  python3 - "$workdir/package" "$STAGING" "$ACCEPT_UNQUALIFIED_PRODUCTION" <<'PY'
+import hashlib, json, pathlib, re, sys
+root = pathlib.Path(sys.argv[1])
+status_path = root / 'RELEASE_STATUS.json'
+if not status_path.is_file():
+    raise SystemExit('Package qualification manifest is missing; do not mix an old archive with this launcher.')
+status = json.loads(status_path.read_text())
+if status.get('schemaVersion') != 1 or type(status.get('productionApproved')) is not bool:
+    raise SystemExit('Invalid package qualification manifest.')
+if status.get('productionApproved') is not True and sys.argv[2] != '1' and sys.argv[3] != '1':
+    raise SystemExit('Production installation blocked: this package is staging-only. Resolve its blockers; --staging is for isolated tests only. An operator-directed fresh rollout requires --accept-unqualified-production and acceptance of the release notes.')
+if status.get('qualification') not in ('staging-only', 'production-approved'):
+    raise SystemExit('Unknown package qualification.')
+if status['productionApproved'] != (status['qualification'] == 'production-approved'):
+    raise SystemExit('Inconsistent package qualification.')
+files = sorted((path for path in root.rglob('*') if path.is_file() and path != status_path),
+               key=lambda path: path.relative_to(root).as_posix())
+tree = ''.join(path.relative_to(root).as_posix() + '\t' + hashlib.sha256(path.read_bytes()).hexdigest() + '\n' for path in files)
+if status.get('payloadTreeSha256') != hashlib.sha256(tree.encode('utf-8')).hexdigest():
+    raise SystemExit('Package payload does not match its tested qualification manifest.')
+dependencies = json.loads((root / 'app/Manager.deps.json').read_text())['libraries']
+database_dependencies = sorted(name for name in dependencies if name.startswith((
+    'Microsoft.EntityFrameworkCore/', 'Pomelo.EntityFrameworkCore.MySql/', 'Microting.EntityFrameworkCore.MySql/')))
+if len(database_dependencies) != 2 or sorted(status.get('databaseDependencies', [])) != database_dependencies:
+    raise SystemExit('Package/database dependency manifest mismatch.')
+if (status['productionApproved'] or sys.argv[3] == '1') and any('/10.0.' not in name for name in database_dependencies):
+    raise SystemExit('Production database-provider support lifecycle is not qualified.')
+runtime = json.loads((root / 'app/Manager.runtimeconfig.json').read_text())['runtimeOptions']
+version = status.get('runtimeVersion', '')
+frameworks = {item['name']: item['version'] for item in runtime.get('includedFrameworks', [])}
+if status.get('framework') != 'net10.0' or runtime.get('tfm') != 'net10.0' or not re.fullmatch(r'10\.0\.\d+', version):
+    raise SystemExit('Matching self-contained .NET 10 backend required.')
+if any(frameworks.get(name) != version for name in ('Microsoft.NETCore.App', 'Microsoft.AspNetCore.App')):
+    raise SystemExit('Package/runtime version mismatch.')
+print('Verified package qualification: ' + status['qualification'])
+if sys.argv[3] == '1' and not status['productionApproved']:
+    print('WARNING: Operator accepted an unqualified fresh production rollout.', file=sys.stderr)
+    print('Clean-install/recovery acceptance, Live/Agent heartbeat stability and auxiliary worker Agent/Hold parity remain open. See the frozen release notes.', file=sys.stderr)
+    print('This override does not certify production approval or change the package manifest.', file=sys.stderr)
+PY
 }
 
 copy_app_without_local_settings() {
@@ -179,12 +323,7 @@ deploy_workflow_package() {
   done
 
   backup_dir="/root/xema-manager-backup-${timestamp}"
-  if systemctl is-active --quiet asterisk; then
-    if [ -n "$(asterisk -rx 'core show channels concise')" ]; then
-      echo 'Active calls detected; installation deferred.' >&2
-      exit 1
-    fi
-  fi
+  check_calls || { echo 'Installation deferred: calls active or call-state check failed.' >&2; return 1; }
   echo "Backing up current manager to $backup_dir"
   cp -a "$manager_dir" "$backup_dir"
   config_backup="${backup_dir}-config"
@@ -192,8 +331,11 @@ deploy_workflow_package() {
   for path in "${config_paths[@]}"; do
     if [ -e "$path" ]; then cp -a --parents "$path" "$config_backup/"; fi
   done
+  if systemctl is-active --quiet xema-manager; then manager_was_active=1; fi
+  if systemctl is-enabled --quiet xema-manager; then manager_was_enabled=1; fi
   deploy_started=1
 
+  check_calls || { echo 'Installation deferred: calls active or call-state check failed.' >&2; return 1; }
   echo "Stopping xema-manager..."
   systemctl stop xema-manager
 
@@ -217,10 +359,10 @@ deploy_workflow_package() {
   bash "$package_dir/deploy/apply-xema-runtime-prereqs.sh"
 
   echo "Restarting services..."
+  check_calls || { echo 'Restart deferred: calls active or call-state check failed.' >&2; return 1; }
   systemctl restart asterisk
   systemctl daemon-reload
-  systemctl reset-failed xema-manager
-  systemctl start xema-manager
+  start_manager
 }
 
 verify_install() {
@@ -231,9 +373,23 @@ verify_install() {
   echo "Verifying XEMA workflow install..."
   systemctl is-active --quiet xema-manager
   systemctl is-active --quiet asterisk
+  local ready=0
   for attempt in $(seq 1 30); do
-    if curl -fsS http://127.0.0.1:4200/api/Setup/Ping >/dev/null; then break; fi
+    if curl -fsS http://127.0.0.1:4200/api/Setup/Ping >/dev/null; then ready=1; break; fi
     sleep 2
+  done
+  [ "$ready" -eq 1 ] || { echo 'Manager readiness timed out.' >&2; return 1; }
+  for service in xema-fastagi xema-astermq xema-simplecdr xema-bff xema-ava xema-sipper xema-metrics; do
+    if systemctl cat "$service" >/dev/null 2>&1; then
+      if ! systemctl is-active --quiet "$service"; then started_workers+=("$service"); fi
+      if ! systemctl is-enabled --quiet "$service"; then enabled_workers+=("$service"); fi
+      systemctl enable --now "$service"
+      systemctl is-active --quiet "$service"
+    fi
+  done
+  sleep 5
+  for service in xema-fastagi xema-astermq xema-simplecdr xema-bff xema-ava xema-sipper xema-metrics; do
+    systemctl is-active --quiet "$service" || { echo "Auxiliary service did not stay running: $service" >&2; return 1; }
   done
   test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:4200/hangfire/)" = 401
   test "$(curl -ks -o /dev/null -w '%{http_code}' https://127.0.0.1/netdata/api/v1/info)" = 401
@@ -249,7 +405,7 @@ verify_install() {
     exit 1
   fi
 
-  if ! asterisk -rx "module show like websocket" | grep -q "res_http_websocket.so"; then
+  if ! check_websocket_module; then
     echo "Asterisk websocket module verification failed." >&2
     exit 1
   fi
@@ -258,6 +414,11 @@ verify_install() {
 }
 
 download_package
+if [ "$VERIFY_ONLY" -eq 1 ]; then
+  echo 'Package verified without installing, restarting services or running the base installer.'
+  exit 0
+fi
+preflight
 run_base_install
 deploy_workflow_package
 verify_install
