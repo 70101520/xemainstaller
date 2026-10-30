@@ -1,0 +1,20 @@
+XEMA Working Hold Checkpoint - STAGING ONLY, NOT PRODUCTION APPROVED
+Source repo: https://github.com/70101520/XEMA_MAIN
+Source branch: XEMA_WORKFLOW
+Source commit: b59f2409446e784411730686d8cf50b603bc03d3
+Source evidence: docs/DELIVERY_CHECKPOINT_20261030.md
+Package file: staging/20261030-hold/xema-workflow-linux-x64.tgz
+Package SHA256: 7cb48438d99684c60ff485ef5b709af831f0f686e6381b41685c8c6945f1c307
+Package bytes: 67728744
+Manager SHA256: 351606e4369dc59d27f339529443148ed14cd62f8b2f3a0d82dfde8fc9b2d9c4
+DbV2 SHA256: 2d7e389dd12dfda6e1e0332ab0e04a8d266f717c760530e7ff3111b57cc2c130
+Matching launcher: staging/20261030-hold/install-xema-workflow.sh
+Qualification: staging-only; productionApproved=false
+Default production package and launcher: unchanged by this checkpoint
+VM: 192.168.252.131 only; production host not contacted
+VM backup: /root/xema-realtime-20261030-060338
+Call evidence: 1793340371.347; Balaram/1004; one Hold15s/Talk16s/Agent31s/Total32s; Recorded1
+Recording evidence: GSM50886bytes; decoded30.84s; real search/WAV/download200; Chrome playback advances; anonymous401
+Package evidence: 21 local checks; 26 staging verify-only checks; 604 effective deployed files match VM; native archive-source compile passed
+Other checks: 196 Linux assertions; 31 JavaScript checks; 13 mocked bootstrap checks; 6 native AMI checks; 40 read-only health/auth checks
+Limit: no uninterrupted clean-install, complete worker/report/OBD/recovery/provider/load acceptance
