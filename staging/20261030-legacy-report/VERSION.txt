@@ -1,0 +1,11 @@
+SourceCommit=7a6b8358e0ee04ac71cea776a55a82714a37f2c3
+SourceBranch=XEMA_WORKFLOW
+Qualification=staging-only
+Runtime=.NET 10.0.14 / EF Core 10
+ManagerSha256=351606e4369dc59d27f339529443148ed14cd62f8b2f3a0d82dfde8fc9b2d9c4
+ArchiveSha256=8e4e331654dc44a47dd91c9cbbe76b885c8f3492b69d5ba9f3be97fa89c79e52
+ManualReport=deploy/sql/inbound-cdr-south-manual.sql
+AutomaticReportRegistration=false
+VerifiedOn=Ubuntu 24.04 staging 192.168.252.131
+FreshCleanInstallVerified=false
+AuxiliaryWorkerMetadataParityVerified=false
