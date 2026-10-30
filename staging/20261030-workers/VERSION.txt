@@ -1,0 +1,19 @@
+XEMA Worker Prerequisites Checkpoint - STAGING ONLY
+Source repo: https://github.com/70101520/XEMA_MAIN
+Source branch: XEMA_WORKFLOW
+Source commit: 3da9d81fdd5629ce49a62808d722e00cfb6ed26b
+Source evidence: docs/WORKER_PREREQS_FIX_20261030.md
+Package file: staging/20261030-workers/xema-workflow-linux-x64.tgz
+Package SHA256: 290482a537c096d130ec78dcf3b9864b33e311011b96b824d84063cbedb58a6d
+Package bytes: 67731024
+Launcher: staging/20261030-workers/install-xema-workflow.sh
+Manager SHA256: 351606e4369dc59d27f339529443148ed14cd62f8b2f3a0d82dfde8fc9b2d9c4
+Runtime/portals: unchanged native Hold checkpoint artifacts
+Targeted repair: separate SimpleCdrWorker/Sipper schemas and grants; retained Ava ARI credentials
+Verified: 23 fixture checks; 35 functional/preservation checks; 21 package and 26 verify-only launcher checks
+Actual call: 1793348181.404; authoritative Balaram/1004; Talk9/Hold7/one Hold/Recorded1; recording16.86seconds
+Known open gap: auxiliary worker Agent/Hold metadata differs; authoritative legacy reports unchanged
+VM backup: /root/xema-worker-prereqs-20261030-081232
+Service scope: only Ava/Sipper restart; Manager/Asterisk untouched; no historical CDR rewrite/replay
+Qualification: staging-only; productionApproved=false; clean-install/full-call/recovery/provider acceptance pending
+Default production package/checksum pair: unchanged
