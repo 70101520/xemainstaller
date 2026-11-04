@@ -69,6 +69,8 @@ the module and disjoint, reviewed SIP/PJSIP binds; see the packaged
 `deploy/asterisk/LEGACY_SIP_COMPATIBILITY.md` before site setup. No VPN addresses,
 provider credentials, ports or routes are guessed or changed by this revision.
 An existing production site must not rerun this fresh installer for the fix.
+Actual BSNL Agent/CDR/recording evidence and remaining checks are recorded in
+[the delivery note](BSNL_DELIVERY_20261104.md), without changing frozen artifacts.
 Download, verify both launcher/archive hashes and use the guide's explicit
 `--accept-unqualified-production` option only for the requested fresh rollout.
 Without that option the candidate remains blocked in normal production mode.
