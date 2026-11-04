@@ -27,3 +27,25 @@ Data Portal playback, reboot/VPN startup ordering, clean-install/recovery and
 the known RC1 application qualification gaps. Asterisk was not upgraded;
 installed and cached APT candidate versions matched, which is not a security
 patch completeness claim. No production fresh reinstall is needed for this fix.
+
+## Staging Deployment Follow-Up
+
+Source `63d1228ccc4a6b62cf67d83434f7a969debd3024` adds the actual isolated Asterisk
+regression test and deployment evidence in `docs/BSNL_STAGING_SYNC_20261104.md`.
+The exact published deploy-helper tree is now installed on staging under
+`/opt/xema/installer/20261104-rc1-install3/deploy` and its helper SHA256 matches
+the archive. The test passed again against that deployed helper: actual chan_sip
+Running/peer CLI, loopback-only binding, no provider registrations/calls, and
+temporary process cleanup. Module/SIP preservation fixtures also passed again.
+
+The main staging PBX was deliberately not given the production legacy load
+policy: its existing legacy wildcard bind and BSNL gateway registration entries
+need site review to avoid PJSIP conflicts or competing registration. Live staging
+configs and Manager/Asterisk PIDs/restart counts were unchanged. No production
+connection or change was made during this follow-up.
+
+Install3 already includes the runtime fix/guide; no application or archive bytes
+changed for this test/documentation-only follow-up. On a new BSNL legacy site,
+configure its VPN and disjoint driver binds, then explicitly enable the module
+as described in the guide. The installer preserves that reviewed choice but
+does not infer provider settings or automatically enable legacy SIP everywhere.
