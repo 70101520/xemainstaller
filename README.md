@@ -40,32 +40,35 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 ```
 
 Production and dev have independent version/checksum pins. Both use the
-same frozen RC1 application with the install3 bootstrap update; future dev publication does not automatically move the
+same RC1 baseline with the verified install4 GUI SIP correction; future dev publication does not automatically move the
 production pin or compile unverified source during installation.
-See [bootstrap verification and version](bootstrap/20261104-3/README.md).
+See [bootstrap verification and version](bootstrap/20261104-4/README.md).
 
 ## Frozen Package
 
-Current application: **20261030-RC1**; installer: **20261104-RC1-install3**.
+Current application: **20261030-RC1 with guarded GUI SIP activation**; installer: **20261104-RC1-install4**.
 Ubuntu Server **24.04 LTS AMD64**.
-Source checkpoint: `d0f301405f273349986f5228dcf3105092a7dcb8`.
+Source checkpoint: see [install4 VERSION.txt](releases/20261104-rc1-install4/VERSION.txt).
 Read [the frozen installation guide](releases/20261030-rc1/README.md) and
 [release notes / open gaps](releases/20261030-rc1/RELEASE_NOTES.md) first.
 This is an operator-requested **unqualified fresh production rollout**, not a
 passed clean-install/recovery acceptance or a production-certified release.
 
-The root launcher points to the new [installer-only snapshot](releases/20261104-rc1-install3/README.md).
+The root launcher points to the new [GUI compatibility snapshot](releases/20261104-rc1-install4/README.md).
 Its paired archive SHA256 is
-`a40e70992eaa5e6e6a739ae7dd383e8b7d8f264eae7215423443619d3f31a492`.
-Install3 changes only the runtime helper, a manual legacy-SIP guide and the
-payload manifest from install2; all backend and portal files are unchanged.
+`25ab5bbbdc46b969d60043a169a2afd38dbff287cd52e8eab66ef732a39d04b8`.
+Install4 changes only the tested Manager assembly, Admin bundle, compatibility
+guide and payload manifest from install3; all other application and portal files
+are unchanged. All seven existing trunk options passed actual GUI New/Edit tests.
 Original frozen paths/tags
 are retained, not overwritten.
 
 Explicit site `load`/`preload`/`require` directives for legacy `chan_sip.so` are
 preserved; conflicting active load/noload directives fail for review. Fresh
-PJSIP defaults still disable legacy SIP. Existing BSNL/TATA SIP trunk types need
-the module and disjoint, reviewed SIP/PJSIP binds; see the packaged
+PJSIP defaults still disable legacy SIP until Admin explicitly saves a legacy
+trunk. Legacy New/Edit can enable/load the installed driver after idle/bind
+checks; PJSIP types bypass this guard. Existing BSNL/TATA SIP trunk types need
+disjoint, reviewed SIP/PJSIP binds; see the packaged
 `deploy/asterisk/LEGACY_SIP_COMPATIBILITY.md` before site setup. No VPN addresses,
 provider credentials, ports or routes are guessed or changed by this revision.
 An existing production site must not rerun this fresh installer for the fix.

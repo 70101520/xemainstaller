@@ -1,5 +1,34 @@
 # BSNL Module Fix Delivery
 
+## Current Install4 GUI Activation
+
+Source checkpoint pushed to the user's `github/XEMA_WORKFLOW`:
+`14dc02fd155869894abba5cd50b69732fe3840e5`.
+Matching immutable installer: `xema-install-20261104-4` /
+`releases/20261104-rc1-install4`; see its VERSION.txt/SHA256SUMS.
+
+All seven actual Admin trunk New/Edit options passed staging GUI and backend
+peer checks. Legacy first-time load uses guarded native AMI ModuleLoad; PJSIP
+options bypass that path. A real port conflict refused before record changes,
+with readable desktop/mobile errors. Original site files and Trunks/Numbers
+rows were restored after fixture Delete; tested Manager/Admin remain on staging.
+Production was not contacted or changed for this update.
+
+Final checks: 202 existing Linux assertions, 44 activation assertions, 24 local
+package checks, 24 Ubuntu entrypoint tests, 33 installer safety tests, 12 module
+policy tests and 8 SIP preservation tests. Full 725-file baseline comparison
+allows only the tested Manager/Admin, compatibility guide and payload manifest
+changes. Actual provider calls/RTP, clean-machine installation, reboot/recovery
+and capacity acceptance were not repeated or certified by this update.
+
+No dropdown mappings, SIP/PJSIP templates, VPN/routes/binds, agent Hold, dialer
+scheduling, CDR/report calculations, worker binaries or other portals changed.
+Future legacy New/Edit can persist/load the driver when the operator's network
+and disjoint SIP/PJSIP binds are ready; custom/unsafe configuration fails for
+review rather than forcing a load. Do not reinstall a working production site.
+
+## Earlier Install3 Delivery
+
 Installer payload commit/tag:
 `24dd28bcb7fa3313d8fd22be2f2f1b4780785705` / `xema-install-20261104-3`.
 Runtime-helper source commit: `c3956cfbf6faebab4d878676dbc331062a43995a`.

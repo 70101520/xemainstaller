@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261104-3/releases/20261104-rc1-install3/xema-workflow-linux-x64.tgz}"
-PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-a40e70992eaa5e6e6a739ae7dd383e8b7d8f264eae7215423443619d3f31a492}"
+PACKAGE_URL="${XEMA_WORKFLOW_PACKAGE_URL:-https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261104-4/releases/20261104-rc1-install4/xema-workflow-linux-x64.tgz}"
+PACKAGE_SHA256="${XEMA_WORKFLOW_PACKAGE_SHA256:-25ab5bbbdc46b969d60043a169a2afd38dbff287cd52e8eab66ef732a39d04b8}"
 
 SKIP_BASE=0
 SKIP_UPGRADE=0
