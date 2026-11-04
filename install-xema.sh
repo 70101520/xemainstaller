@@ -35,16 +35,16 @@ select_channel() {
   # Independent pins: updating dev must never move the production baseline.
   case "$channel" in
     production)
-      release=20261030-RC1-install2
-      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261030-2/releases/20261030-rc1-install2
-      launcher_sha=926ce0e00fb91ea9c240287c6aeb89fee46630ea137d6b96401e505a475842d6
-      package_sha=56ead83ba4d6165b4cade0a2fd0e3757345e64718628c8f5201ea235be5b8c03
+      release=20261104-RC1-install3
+      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261104-3/releases/20261104-rc1-install3
+      launcher_sha=c263916a62fd14d476f3fd64559d3e49caa5166e760c205d0c380f4e29b6478c
+      package_sha=a40e70992eaa5e6e6a739ae7dd383e8b7d8f264eae7215423443619d3f31a492
       ;;
     dev)
-      release=20261030-RC1-install2-test
-      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261030-2/releases/20261030-rc1-install2
-      launcher_sha=926ce0e00fb91ea9c240287c6aeb89fee46630ea137d6b96401e505a475842d6
-      package_sha=56ead83ba4d6165b4cade0a2fd0e3757345e64718628c8f5201ea235be5b8c03
+      release=20261104-RC1-install3-test
+      release_url=https://raw.githubusercontent.com/70101520/xemainstaller/xema-install-20261104-3/releases/20261104-rc1-install3
+      launcher_sha=c263916a62fd14d476f3fd64559d3e49caa5166e760c205d0c380f4e29b6478c
+      package_sha=a40e70992eaa5e6e6a739ae7dd383e8b7d8f264eae7215423443619d3f31a492
       ;;
     *) echo 'Unknown install channel.' >&2; return 1 ;;
   esac

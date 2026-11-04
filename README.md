@@ -40,13 +40,13 @@ curl -fsSL https://raw.githubusercontent.com/70101520/xemainstaller/main/install
 ```
 
 Production and dev have independent version/checksum pins. Both use the
-same frozen RC1 application with the install2 bootstrap update; future dev publication does not automatically move the
+same frozen RC1 application with the install3 bootstrap update; future dev publication does not automatically move the
 production pin or compile unverified source during installation.
-See [bootstrap verification and version](bootstrap/20261030-2/README.md).
+See [bootstrap verification and version](bootstrap/20261104-3/README.md).
 
 ## Frozen Package
 
-Current application: **20261030-RC1**; installer: **20261030-RC1-install2**.
+Current application: **20261030-RC1**; installer: **20261104-RC1-install3**.
 Ubuntu Server **24.04 LTS AMD64**.
 Source checkpoint: `d0f301405f273349986f5228dcf3105092a7dcb8`.
 Read [the frozen installation guide](releases/20261030-rc1/README.md) and
@@ -54,12 +54,21 @@ Read [the frozen installation guide](releases/20261030-rc1/README.md) and
 This is an operator-requested **unqualified fresh production rollout**, not a
 passed clean-install/recovery acceptance or a production-certified release.
 
-The root launcher points to the new [installer-only snapshot](releases/20261030-rc1-install2/README.md).
+The root launcher points to the new [installer-only snapshot](releases/20261104-rc1-install3/README.md).
 Its paired archive SHA256 is
-`56ead83ba4d6165b4cade0a2fd0e3757345e64718628c8f5201ea235be5b8c03`.
-Only the installer helper and payload manifest differ from the original RC1
-archive; all backend and portal files are unchanged. Original frozen paths/tags
+`a40e70992eaa5e6e6a739ae7dd383e8b7d8f264eae7215423443619d3f31a492`.
+Install3 changes only the runtime helper, a manual legacy-SIP guide and the
+payload manifest from install2; all backend and portal files are unchanged.
+Original frozen paths/tags
 are retained, not overwritten.
+
+Explicit site `load`/`preload`/`require` directives for legacy `chan_sip.so` are
+preserved; conflicting active load/noload directives fail for review. Fresh
+PJSIP defaults still disable legacy SIP. Existing BSNL/TATA SIP trunk types need
+the module and disjoint, reviewed SIP/PJSIP binds; see the packaged
+`deploy/asterisk/LEGACY_SIP_COMPATIBILITY.md` before site setup. No VPN addresses,
+provider credentials, ports or routes are guessed or changed by this revision.
+An existing production site must not rerun this fresh installer for the fix.
 Download, verify both launcher/archive hashes and use the guide's explicit
 `--accept-unqualified-production` option only for the requested fresh rollout.
 Without that option the candidate remains blocked in normal production mode.
